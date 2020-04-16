@@ -13,13 +13,14 @@
         android:layout_height="50dp"
         android:layout_marginStart="25dp"
         android:layout_marginLeft="25dp"
-        android:layout_marginTop="260dp"
+        android:layout_marginTop="196dp"
         android:layout_marginEnd="25dp"
         android:layout_marginRight="25dp"
-        android:background="@android:color/background_light"
+        android:background="@drawable/rounded_corner_registration"
         android:ems="10"
         android:hint="Username"
         android:inputType="textPersonName"
+
         android:paddingLeft="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -31,10 +32,11 @@
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginTop="16dp"
-        android:background="@android:color/background_light"
+        android:background="@drawable/rounded_corner_registration"
         android:ems="10"
         android:hint="Email"
         android:inputType="textEmailAddress"
+
         android:paddingLeft="20dp"
         app:layout_constraintEnd_toEndOf="@+id/username_editText_register"
         app:layout_constraintHorizontal_bias="0.0"
@@ -46,10 +48,10 @@
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginTop="12dp"
-        android:background="@android:color/background_light"
+
         android:ems="10"
         android:hint="Password"
-
+        android:background="@drawable/rounded_corner_registration"
         android:inputType="textPassword"
         android:paddingLeft="20dp"
         app:layout_constraintEnd_toEndOf="@+id/email_editText_register"
@@ -81,4 +83,5 @@
         app:layout_constraintHorizontal_bias="0.951"
         app:layout_constraintStart_toStartOf="@+id/register_button_register"
         app:layout_constraintTop_toBottomOf="@+id/register_button_register" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
