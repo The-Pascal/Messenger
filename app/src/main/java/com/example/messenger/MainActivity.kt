@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity() {
 
         if(email.isEmpty() || password.isEmpty()){
             Toast.makeText(this , "Enter all fields first ",Toast.LENGTH_SHORT).show()
+            return
         }
 
         var auth = FirebaseAuth.getInstance()
@@ -58,6 +59,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 else{
                     Toast.makeText(this,"Account successfully created with uid : ${it.result?.user?.uid} ",Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(this , messageActivity::class.java))
                 }
             }
             .addOnFailureListener{
