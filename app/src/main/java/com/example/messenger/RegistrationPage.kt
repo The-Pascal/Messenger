@@ -89,7 +89,6 @@ class RegistrationPage : AppCompatActivity() {
                 }
                 else{
                     Toast.makeText(this,"Account successfully created with uid : ${it.result?.user?.uid} ",Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this , messageActivity::class.java))
                     uploadPhotoToFirebase()
                 }
             }
@@ -123,6 +122,10 @@ class RegistrationPage : AppCompatActivity() {
         ref.setValue(users)
             .addOnSuccessListener {
                 Log.e("registerActivity","User is saved with $uid and $profileImageUrl")
+
+                val intent = Intent(this, messageActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or ( Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
             }
     }
 }
