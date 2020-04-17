@@ -22,7 +22,7 @@ class loginpage : AppCompatActivity() {
         login()
 
         backToRegistration.setOnClickListener{
-            val intent = Intent(this , MainActivity::class.java)
+            val intent = Intent(this , RegistrationPage::class.java)
             startActivity(intent)
         }
     }
@@ -32,11 +32,21 @@ class loginpage : AppCompatActivity() {
             val email = email_editText_login.text.toString()
             val password = password_editText_login.text.toString()
 
+            if(email.isEmpty() || password.isEmpty()){
+                Toast.makeText(this, "Enter all Credentials",Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             FirebaseAuth.getInstance().signInWithEmailAndPassword(email,password)
                 .addOnCompleteListener{
                     if(it.isSuccessful) {
                         Toast.makeText(this, "Successfully Logged in", Toast.LENGTH_SHORT).show()
                         startActivity(Intent(this , messageActivity::class.java))
+                    }
+                    else
+                    {
+                        Toast.makeText(this, "Email is badly formatted",Toast.LENGTH_SHORT).show()
+                        return@addOnCompleteListener
                     }
 
 

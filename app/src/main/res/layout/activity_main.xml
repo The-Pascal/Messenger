@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?android:attr/colorMultiSelectHighlight"
-    tools:context=".MainActivity">
+    tools:context=".RegistrationPage">
 
     <EditText
         android:id="@+id/username_editText_register"
@@ -13,7 +13,7 @@
         android:layout_height="50dp"
         android:layout_marginStart="25dp"
         android:layout_marginLeft="25dp"
-        android:layout_marginTop="196dp"
+        android:layout_marginTop="252dp"
         android:layout_marginEnd="25dp"
         android:layout_marginRight="25dp"
         android:background="@drawable/rounded_corner_registration"
@@ -23,7 +23,7 @@
 
         android:paddingLeft="20dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -83,5 +83,17 @@
         app:layout_constraintHorizontal_bias="0.951"
         app:layout_constraintStart_toStartOf="@+id/register_button_register"
         app:layout_constraintTop_toBottomOf="@+id/register_button_register" />
+
+    <Button
+        android:id="@+id/image_button_register"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+
+        android:background="@drawable/rounded_button"
+        android:text="Select Photo"
+        app:layout_constraintBottom_toTopOf="@+id/username_editText_register"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

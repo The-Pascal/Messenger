@@ -1,19 +1,25 @@
 package com.example.messenger
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Paint
+import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.text.Html
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_main.*
 import org.w3c.dom.Text
+import java.util.*
 
-class MainActivity : AppCompatActivity() {
+class RegistrationPage : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +43,27 @@ class MainActivity : AppCompatActivity() {
             startActivity(myintent)
         }
 
+        image_button_register.setOnClickListener{
+            val intent =Intent(Intent.ACTION_PICK)
+            intent.type = "image/*"
+            startActivityForResult(intent,0)
+
+        }
+
+    }
+
+    var selectedPhotoUri : Uri?= null
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if(requestCode == 0 && resultCode== Activity.RESULT_OK && data!= null)
+        {
+            selectedPhotoUri = data.data
+            val bitmap = MediaStore.Images.Media.getBitmap(contentResolver,selectedPhotoUri)
+            val bitmapDrawable = BitmapDrawable(bitmap)
+            image_button_register.setBackgroundDrawable(bitmapDrawable)
+        }
     }
 
     fun register(){
@@ -60,11 +87,26 @@ class MainActivity : AppCompatActivity() {
                 else{
                     Toast.makeText(this,"Account successfully created with uid : ${it.result?.user?.uid} ",Toast.LENGTH_SHORT).show()
                     startActivity(Intent(this , messageActivity::class.java))
+                    uploadPhotoToFirebase()
                 }
             }
             .addOnFailureListener{
                 Toast.makeText(this, "Error creating account",Toast.LENGTH_SHORT).show()
             }
 
+    }
+
+    private fun uploadPhotoToFirebase() {
+            if(selectedPhotoUri == null) return
+
+        val filename = UUID.randomUUID().toString()
+        val ref = FirebaseStorage.getInstance().getReference("/images/$filename")
+        ref.putFile(selectedPhotoUri!!)
+            .addOnCompleteListener{
+                Log.e("registerActivity","Photo uploaded successfully")
+            }
+        ref.downloadUrl.addOnCompleteListener {
+                Log.e("registerActivity","image downloaded url : $it")
+            }
     }
 }
