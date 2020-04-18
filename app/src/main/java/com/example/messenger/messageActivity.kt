@@ -13,17 +13,9 @@ class  messageActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_message)
 
-       verifyUserIsLoggedIn()
     }
 
-    private fun verifyUserIsLoggedIn(){
-        val uid = FirebaseAuth.getInstance().uid
-        if(uid == null){
-            val intent = Intent(this, RegistrationPage::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or ( Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-        }
-    }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
@@ -32,6 +24,8 @@ class  messageActivity : AppCompatActivity() {
 
             }
             R.id.sign_out_menu->{
+
+                FirebaseAuth.getInstance().signOut()
                 val intent = Intent(this, RegistrationPage::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or ( Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)

@@ -51,6 +51,8 @@ class RegistrationPage : AppCompatActivity() {
 
         }
 
+        verifyUserIsLoggedIn()
+
     }
 
     var selectedPhotoUri : Uri?= null
@@ -127,6 +129,19 @@ class RegistrationPage : AppCompatActivity() {
                 intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or ( Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
             }
+    }
+
+    private fun verifyUserIsLoggedIn(){
+
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            // User is signed in
+            val intent = Intent(this, messageActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or ( Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+        }
+
+
     }
 }
 

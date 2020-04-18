@@ -1,5 +1,6 @@
 package com.example.messenger
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -45,8 +46,15 @@ class newmessageActivity : AppCompatActivity() {
                     if(user != null) {
                         adapter.add(UserItem(user))
                     }
-                    recyclerView_new_messages.adapter = adapter
                 }
+                adapter.setOnItemClickListener{item, view ->
+                    val intent= Intent(view.context , ChatLogActivity::class.java)
+                    startActivity(intent)
+
+                    finish()
+
+                }
+                recyclerView_new_messages.adapter = adapter
             }
 
         })
