@@ -14,11 +14,7 @@
                 android:value=".messageActivity"/>
         </activity>
         <activity android:name=".messageActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".loginpage" />
         <activity android:name=".RegistrationPage">

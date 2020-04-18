@@ -131,5 +131,5 @@ class RegistrationPage : AppCompatActivity() {
 }
 
 class Users(val uid: String , val username: String , val imageUrl : String){
-
+    constructor(): this("","","")
 }
