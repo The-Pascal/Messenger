@@ -4,6 +4,10 @@ import android.content.ClipData
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.view.ViewAnimationUtils
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
@@ -12,14 +16,36 @@ import com.example.messenger.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.squareup.picasso.Picasso
+import com.xwray.groupie.Group
 import kotlinx.android.synthetic.main.chat_from_row.view.*
+import kotlinx.android.synthetic.main.chat_to_row.*
 import kotlinx.android.synthetic.main.chat_to_row.view.*
 import kotlinx.android.synthetic.main.user_row.view.*
 import java.sql.Timestamp
 
-class ChatLogActivity : AppCompatActivity() {
+class ChatLogActivity : AppCompatActivity() ,
+Animation.AnimationListener{
 
     val adapter = GroupAdapter<ViewHolder>()
+
+
+    private lateinit var animFadeIn: Animation
+    private lateinit var animFadeOut: Animation
+    private lateinit var animFadeInOut: Animation
+
+    private lateinit var animZoomIn: Animation
+    private lateinit var animZoomOut: Animation
+
+    private lateinit var animLeftRight: Animation
+    private lateinit var animRightLeft: Animation
+    private lateinit var animTopBottom: Animation
+
+    private lateinit var animBounce: Animation
+    private lateinit var animFlash: Animation
+
+    private lateinit var animRotateLeft: Animation
+    private lateinit var animRotateRight: Animation
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +62,46 @@ class ChatLogActivity : AppCompatActivity() {
             performSendMessage()
         }
 
+        loadanimationTransition()
+
       // setupDummyData()
+    }
+
+    private fun loadanimationTransition(){
+        animLeftRight = AnimationUtils.loadAnimation(
+            this, R.anim.left_right)
+        animRightLeft = AnimationUtils.loadAnimation(
+            this, R.anim.right_left)
+        animFadeIn = AnimationUtils.loadAnimation(
+            this, R.anim.fade_in)
+        //animFadeIn.setAnimationListener(this)
+        animFadeOut = AnimationUtils.loadAnimation(
+            this, R.anim.fade_out)
+        animFadeInOut = AnimationUtils.loadAnimation(
+            this, R.anim.fade_in_out)
+
+        animZoomIn = AnimationUtils.loadAnimation(
+            this, R.anim.zoom_in)
+        animZoomOut = AnimationUtils.loadAnimation(
+            this, R.anim.zoom_out)
+
+        animLeftRight = AnimationUtils.loadAnimation(
+            this, R.anim.left_right)
+        animRightLeft = AnimationUtils.loadAnimation(
+            this, R.anim.right_left)
+        animTopBottom = AnimationUtils.loadAnimation(
+            this, R.anim.top_bot)
+
+        animBounce = AnimationUtils.loadAnimation(
+            this, R.anim.bounce)
+        animFlash = AnimationUtils.loadAnimation(
+            this, R.anim.flash)
+
+        animRotateLeft = AnimationUtils.loadAnimation(
+            this, R.anim.rotate_left)
+        animRotateRight = AnimationUtils.loadAnimation(
+            this, R.anim.rotate_right)
+
     }
 
 
@@ -81,7 +146,6 @@ class ChatLogActivity : AppCompatActivity() {
                         recyclerView_chat_log.scrollToPosition(adapter.itemCount - 1)
                     }
                     else{
-                        val justvariable = 5
                     }
 
                 }
@@ -126,6 +190,17 @@ class ChatLogActivity : AppCompatActivity() {
 
     }
 
+    override fun onAnimationRepeat(animation: Animation?) {}
+
+    override fun onAnimationEnd(animation: Animation?) {}
+
+    override fun onAnimationStart(animation: Animation?) {}
+
+}
+
+
+private fun Animation.setAnimationListener(childEventListener: ChildEventListener) {
+
 }
 
 class ChatFromItem(val text: String, val image : String): Item<ViewHolder>() {
@@ -142,12 +217,18 @@ class ChatFromItem(val text: String, val image : String): Item<ViewHolder>() {
 
 }
 
-class ChatToItem(val text:String, val user: Users): Item<ViewHolder>() {
+class ChatToItem(val text:String, val user: Users): Item<ViewHolder>(), Animation.AnimationListener {
+
+    private lateinit var animLeftRight: Animation
+    private lateinit var animRightLeft: Animation
+
+
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemView.textView_to_row.text = text
         val uri = user.imageUrl
         Picasso.get().load(uri).into(viewHolder.itemView.imageView_to_row)
+
     }
 
     override fun getLayout(): Int {
@@ -155,6 +236,18 @@ class ChatToItem(val text:String, val user: Users): Item<ViewHolder>() {
         return R.layout.chat_to_row
 
 
+    }
+
+    override fun onAnimationRepeat(animation: Animation?) {
+
+    }
+
+    override fun onAnimationEnd(animation: Animation?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onAnimationStart(animation: Animation?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
 
