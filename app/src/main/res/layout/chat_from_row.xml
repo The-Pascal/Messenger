@@ -5,7 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginTop="6dp"
-    android:layout_marginBottom="6dp">
+    android:layout_marginBottom="6dp"
+    android:layoutAnimation="@anim/chat_from_row_anim"
+    android:animateLayoutChanges="true"
+    >
 
     <TextView
         android:id="@+id/textView_from_row"
