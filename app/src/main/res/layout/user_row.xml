@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layoutAnimation="@anim/send_message_to_new_user_anim">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profileimage_user_row"
