@@ -10,12 +10,11 @@ import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_chat_log.*
 import com.example.messenger.R
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.chat_from_row.view.*
 import kotlinx.android.synthetic.main.chat_to_row.view.*
+import kotlinx.android.synthetic.main.user_row.view.*
 import java.sql.Timestamp
 
 class ChatLogActivity : AppCompatActivity() {
@@ -58,18 +57,28 @@ class ChatLogActivity : AppCompatActivity() {
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                 val chatMessage = p0.getValue(ChatMessage::class.java)
 
+
                 val user = intent.getParcelableExtra<Users>(newmessageActivity.USER_KEY)
+                val uid = FirebaseAuth.getInstance().uid
+                val databaseref = FirebaseDatabase.getInstance().getReference("/Users")
+                val imageUrl :String ?= null
+
 
 
                 if(chatMessage != null) {
                     Log.e("chat",chatMessage.text)
 
-                    if(chatMessage.fromId == FirebaseAuth.getInstance().uid && user.uid == chatMessage.toId)
+                    if(chatMessage.fromId == uid && user.uid == chatMessage.toId)
                     {
-                        adapter.add(ChatToItem(chatMessage.text))
+                        val currentUser = messageActivity.currentUser
+                        adapter.add(ChatToItem(chatMessage.text , currentUser!!))
+                        recyclerView_chat_log.scrollToPosition(adapter.itemCount - 1)
+
                     }
-                    else if(chatMessage.toId == FirebaseAuth.getInstance().uid && user.uid == chatMessage.fromId){
-                        adapter.add(ChatFromItem(chatMessage.text))
+                    else if(chatMessage.toId == uid && user.uid == chatMessage.fromId){
+
+                        adapter.add(ChatFromItem(chatMessage.text ,user.imageUrl))
+                        recyclerView_chat_log.scrollToPosition(adapter.itemCount - 1)
                     }
                     else{
                         val justvariable = 5
@@ -102,6 +111,8 @@ class ChatLogActivity : AppCompatActivity() {
         val chatMessage = ChatMessage(ref.key!!,text , fromId, toId, System.currentTimeMillis() /1000)
         ref.setValue(chatMessage)
             .addOnSuccessListener {
+                enter_message_chat_log.text.clear()
+                recyclerView_chat_log.scrollToPosition(adapter.itemCount - 1)
                 Log.d("chatmessage","this is message ")
             }
 
@@ -109,10 +120,11 @@ class ChatLogActivity : AppCompatActivity() {
 
 }
 
-class ChatFromItem(val text: String): Item<ViewHolder>() {
+class ChatFromItem(val text: String, val image : String): Item<ViewHolder>() {
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemView.textView_from_row.text = text
+        Picasso.get().load(image).into(viewHolder.itemView.imageView_from_row)
     }
     override fun getLayout(): Int {
 
@@ -122,10 +134,12 @@ class ChatFromItem(val text: String): Item<ViewHolder>() {
 
 }
 
-class ChatToItem(val text:String): Item<ViewHolder>() {
+class ChatToItem(val text:String, val user: Users): Item<ViewHolder>() {
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemView.textView_to_row.text = text
+        val uri = user.imageUrl
+        Picasso.get().load(uri).into(viewHolder.itemView.imageView_to_row)
     }
 
     override fun getLayout(): Int {

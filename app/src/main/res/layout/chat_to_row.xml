@@ -11,20 +11,24 @@
         android:id="@+id/textView_to_row"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         android:background="@drawable/rounded_corner_registration"
         android:maxWidth="240dp"
         android:padding="16dp"
         android:text="This is my message to show that how recycler view is going to wraper content for me "
-        app:layout_constraintEnd_toStartOf="@+id/imageView_to_row" />
+        app:layout_constraintEnd_toStartOf="@+id/imageView_to_row"
+        tools:layout_editor_absoluteY="0dp" />
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imageView_to_row"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+
         android:layout_marginEnd="6dp"
         android:layout_marginRight="6dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/common_google_signin_btn_icon_dark_normal" />
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
