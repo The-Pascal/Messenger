@@ -6,8 +6,10 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
@@ -28,6 +30,16 @@ class  messageActivity : AppCompatActivity() {
         setContentView(R.layout.activity_message)
 
         recyclerView_message_activity.adapter = adapter
+        recyclerView_message_activity.addItemDecoration(DividerItemDecoration(this , DividerItemDecoration.VERTICAL))
+
+        adapter.setOnItemClickListener { item, view ->
+            Log.d("newmessage","click on one of the new message ")
+            val intent = Intent( this , ChatLogActivity::class.java)
+
+            val row = item as LatestMessageRow
+            intent.putExtra(newmessageActivity.USER_KEY , row.chatPartnerUser)
+            startActivity(intent)
+        }
 
         fetchCurrentUser()
         listenForNewMessages()
@@ -35,6 +47,8 @@ class  messageActivity : AppCompatActivity() {
     }
 
     class LatestMessageRow(val chatMessage: ChatLogActivity.ChatMessage) : Item<ViewHolder>(){
+
+        var chatPartnerUser: Users?= null
         override fun getLayout(): Int {
             return R.layout.newmessage
 
@@ -59,10 +73,10 @@ class  messageActivity : AppCompatActivity() {
                 }
 
                 override fun onDataChange(p0: DataSnapshot) {
-                    val user = p0.getValue(Users:: class.java)
-                    viewHolder.itemView.username_new_message.text = user?.username
+                    chatPartnerUser = p0.getValue(Users:: class.java)
+                    viewHolder.itemView.username_new_message.text = chatPartnerUser?.username
 
-
+                    Picasso.get().load(chatPartnerUser?.imageUrl).into(viewHolder.itemView.imageView_new_message)
                 }
 
             })
