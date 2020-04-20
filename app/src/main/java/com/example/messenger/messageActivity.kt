@@ -30,9 +30,12 @@ class  messageActivity : AppCompatActivity() {
 
     companion object{
         var currentUser: Users? = null
+        var chatPartnerName : String ?= null
 
     }
     val CHANNEL_ID = "my_channel_01"
+
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,24 +58,12 @@ class  messageActivity : AppCompatActivity() {
 
         fetchCurrentUser()
         listenForNewMessages()
-        createNotificationChannel()
+        //createNotificationChannel()
 
-        var builder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle("Hello")
-            .setContentText("this is doing good ")
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-
-        val notificationId = 79870
-
-        with(NotificationManagerCompat.from(this)) {
-            // notificationId is a unique int for each notification that you must define
-            notify(notificationId, builder.build())
-        }
 
     }
 
-    private fun createNotificationChannel() {
+    /*private fun createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -88,7 +79,7 @@ class  messageActivity : AppCompatActivity() {
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
-    }
+    }*/
 
     class LatestMessageRow(val chatMessage: ChatLogActivity.ChatMessage) : Item<ViewHolder>(){
 
@@ -118,6 +109,8 @@ class  messageActivity : AppCompatActivity() {
 
                 override fun onDataChange(p0: DataSnapshot) {
                     chatPartnerUser = p0.getValue(Users:: class.java)
+
+                    chatPartnerName = chatPartnerUser?.username
                     viewHolder.itemView.username_new_message.text = chatPartnerUser?.username
 
                     Picasso.get().load(chatPartnerUser?.imageUrl).into(viewHolder.itemView.imageView_new_message)
@@ -151,6 +144,8 @@ class  messageActivity : AppCompatActivity() {
 
                 latestMessagesMap[p0.key!!] = chatMessage
                 refreshRecyclerViewMessage()
+
+                notificationbuilder(chatMessage)
             }
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
@@ -170,6 +165,21 @@ class  messageActivity : AppCompatActivity() {
     val adapter = GroupAdapter<ViewHolder>()
 
 
+    private fun notificationbuilder(chatMessage: ChatLogActivity.ChatMessage){
+
+        var builder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle(chatPartnerName)
+            .setContentText(chatMessage.text)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+        val notificationId = 79870
+
+        with(NotificationManagerCompat.from(this)) {
+            // notificationId is a unique int for each notification that you must define
+            notify(notificationId, builder.build())
+        }
+    }
     private fun fetchCurrentUser(){
         val uid = FirebaseAuth.getInstance().uid
         val ref = FirebaseDatabase.getInstance().getReference("/Users/$uid")
