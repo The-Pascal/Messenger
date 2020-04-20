@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
 
     android:background="#FF9800"
-    tools:context=".loginpage">
+    tools:context=".registerLogin.loginpage">
 
     <EditText
         android:id="@+id/email_editText_login"

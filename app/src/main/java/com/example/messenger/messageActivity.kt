@@ -1,12 +1,22 @@
 package com.example.messenger
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.example.messenger.chatLog.ChatLogActivity
+import com.example.messenger.registerLogin.RegistrationPage
+import com.example.messenger.registerLogin.Users
+import com.example.messenger.totalUsers.newmessageActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.squareup.picasso.Picasso
@@ -14,7 +24,6 @@ import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_message.*
-import kotlinx.android.synthetic.main.activity_newmessage.*
 import kotlinx.android.synthetic.main.newmessage.view.*
 
 class  messageActivity : AppCompatActivity() {
@@ -23,6 +32,7 @@ class  messageActivity : AppCompatActivity() {
         var currentUser: Users? = null
 
     }
+    val CHANNEL_ID = "my_channel_01"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,11 +49,45 @@ class  messageActivity : AppCompatActivity() {
             val row = item as LatestMessageRow
             intent.putExtra(newmessageActivity.USER_KEY , row.chatPartnerUser)
             startActivity(intent)
+
+
         }
 
         fetchCurrentUser()
         listenForNewMessages()
+        createNotificationChannel()
 
+        var builder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle("Hello")
+            .setContentText("this is doing good ")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+        val notificationId = 79870
+
+        with(NotificationManagerCompat.from(this)) {
+            // notificationId is a unique int for each notification that you must define
+            notify(notificationId, builder.build())
+        }
+
+    }
+
+    private fun createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+            val name = "Test Notification"
+            val descriptionText = "getString(R.string.channel_description)"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
     }
 
     class LatestMessageRow(val chatMessage: ChatLogActivity.ChatMessage) : Item<ViewHolder>(){

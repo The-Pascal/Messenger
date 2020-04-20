@@ -1,27 +1,23 @@
-package com.example.messenger
+package com.example.messenger.chatLog
 
-import android.content.ClipData
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.view.ViewAnimationUtils
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import com.example.messenger.R
+import com.example.messenger.messageActivity
+import com.example.messenger.totalUsers.newmessageActivity
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_chat_log.*
-import com.example.messenger.R
+import com.example.messenger.registerLogin.Users
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.squareup.picasso.Picasso
-import com.xwray.groupie.Group
 import kotlinx.android.synthetic.main.chat_from_row.view.*
-import kotlinx.android.synthetic.main.chat_to_row.*
 import kotlinx.android.synthetic.main.chat_to_row.view.*
-import kotlinx.android.synthetic.main.user_row.view.*
-import java.sql.Timestamp
 
 class ChatLogActivity : AppCompatActivity() ,
 Animation.AnimationListener{
@@ -69,38 +65,52 @@ Animation.AnimationListener{
 
     private fun loadanimationTransition(){
         animLeftRight = AnimationUtils.loadAnimation(
-            this, R.anim.left_right)
+            this, R.anim.left_right
+        )
         animRightLeft = AnimationUtils.loadAnimation(
-            this, R.anim.right_left)
+            this, R.anim.right_left
+        )
         animFadeIn = AnimationUtils.loadAnimation(
-            this, R.anim.fade_in)
+            this, R.anim.fade_in
+        )
         //animFadeIn.setAnimationListener(this)
         animFadeOut = AnimationUtils.loadAnimation(
-            this, R.anim.fade_out)
+            this, R.anim.fade_out
+        )
         animFadeInOut = AnimationUtils.loadAnimation(
-            this, R.anim.fade_in_out)
+            this, R.anim.fade_in_out
+        )
 
         animZoomIn = AnimationUtils.loadAnimation(
-            this, R.anim.zoom_in)
+            this, R.anim.zoom_in
+        )
         animZoomOut = AnimationUtils.loadAnimation(
-            this, R.anim.zoom_out)
+            this, R.anim.zoom_out
+        )
 
         animLeftRight = AnimationUtils.loadAnimation(
-            this, R.anim.left_right)
+            this, R.anim.left_right
+        )
         animRightLeft = AnimationUtils.loadAnimation(
-            this, R.anim.right_left)
+            this, R.anim.right_left
+        )
         animTopBottom = AnimationUtils.loadAnimation(
-            this, R.anim.top_bot)
+            this, R.anim.top_bot
+        )
 
         animBounce = AnimationUtils.loadAnimation(
-            this, R.anim.bounce)
+            this, R.anim.bounce
+        )
         animFlash = AnimationUtils.loadAnimation(
-            this, R.anim.flash)
+            this, R.anim.flash
+        )
 
         animRotateLeft = AnimationUtils.loadAnimation(
-            this, R.anim.rotate_left)
+            this, R.anim.rotate_left
+        )
         animRotateRight = AnimationUtils.loadAnimation(
-            this, R.anim.rotate_right)
+            this, R.anim.rotate_right
+        )
 
     }
 
@@ -135,14 +145,25 @@ Animation.AnimationListener{
 
                     if(chatMessage.fromId == uid && user.uid == chatMessage.toId)
                     {
-                        val currentUser = messageActivity.currentUser
-                        adapter.add(ChatToItem(chatMessage.text , currentUser!!))
+                        val currentUser =
+                            messageActivity.currentUser
+                        adapter.add(
+                            ChatToItem(
+                                chatMessage.text,
+                                currentUser!!
+                            )
+                        )
                         recyclerView_chat_log.scrollToPosition(adapter.itemCount - 1)
 
                     }
                     else if(chatMessage.toId == uid && user.uid == chatMessage.fromId){
 
-                        adapter.add(ChatFromItem(chatMessage.text ,user.imageUrl))
+                        adapter.add(
+                            ChatFromItem(
+                                chatMessage.text,
+                                user.imageUrl
+                            )
+                        )
                         recyclerView_chat_log.scrollToPosition(adapter.itemCount - 1)
                     }
                     else{
@@ -172,7 +193,14 @@ Animation.AnimationListener{
 
         val ref = FirebaseDatabase.getInstance().getReference("/messages").push()
 
-        val chatMessage = ChatMessage(ref.key!!,text , fromId, toId, System.currentTimeMillis() /1000)
+        val chatMessage =
+            ChatMessage(
+                ref.key!!,
+                text,
+                fromId,
+                toId,
+                System.currentTimeMillis() / 1000
+            )
         ref.setValue(chatMessage)
             .addOnSuccessListener {
                 enter_message_chat_log.text.clear()

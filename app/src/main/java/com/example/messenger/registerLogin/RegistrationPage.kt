@@ -1,25 +1,24 @@
-package com.example.messenger
+package com.example.messenger.registerLogin
 
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Paint
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Parcelable
 import android.provider.MediaStore
-import android.text.Html
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import com.example.messenger.R
+import com.example.messenger.messageActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.activity_main.*
-import org.w3c.dom.Text
 import java.util.*
 
 class RegistrationPage : AppCompatActivity() {
@@ -122,7 +121,11 @@ class RegistrationPage : AppCompatActivity() {
     private fun saveUserToFirebaseDatabase(profileImageUrl : String){
         val uid = FirebaseAuth.getInstance().uid?: ""
         val ref = FirebaseDatabase.getInstance().getReference("/Users/$uid")
-        val users = Users(uid, username_editText_register.text.toString() , profileImageUrl)
+        val users = Users(
+            uid,
+            username_editText_register.text.toString(),
+            profileImageUrl
+        )
         ref.setValue(users)
             .addOnSuccessListener {
                 Log.e("registerActivity","User is saved with $uid and $profileImageUrl")

@@ -1,4 +1,4 @@
-package com.example.messenger
+package com.example.messenger.registerLogin
 
 import android.content.Intent
 import android.graphics.Paint
@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
+import com.example.messenger.R
+import com.example.messenger.messageActivity
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_loginpage.*
 
