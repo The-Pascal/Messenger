@@ -9,6 +9,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import androidx.fragment.app.FragmentManager
 import com.example.messenger.R
 import com.example.messenger.latestMessages.messageActivity
 import com.example.messenger.totalUsers.newmessageActivity
@@ -17,6 +18,7 @@ import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_chat_log.*
 import com.example.messenger.registerLogin.Users
+import com.example.messenger.show_images.show_images_dialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
@@ -25,6 +27,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.chat_from_row.view.*
 import kotlinx.android.synthetic.main.chat_to_row.view.*
 import kotlinx.android.synthetic.main.send_image_in_chat_log.view.*
+import kotlinx.android.synthetic.main.show_image_dialog.*
 import java.util.*
 
 class ChatLogActivity : AppCompatActivity() {
@@ -52,6 +55,7 @@ class ChatLogActivity : AppCompatActivity() {
             startActivityForResult(intent,0)
 
         }
+
     }
 
     var selectedPhotoUri : Uri?= null
@@ -100,6 +104,16 @@ class ChatLogActivity : AppCompatActivity() {
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                 val chatMessage = p0.getValue(ChatMessage::class.java)
+
+                adapter.setOnItemClickListener { item, view ->
+                    if(chatMessage==null) return@setOnItemClickListener
+
+                    if(chatMessage.imageUrl!= "") {
+                        val dialog = show_images_dialog()
+                        dialog.sendImageSelected(chatMessage)
+                        dialog.show(supportFragmentManager, "123")
+                    }
+                }
 
                 val user = intent.getParcelableExtra<Users>(newmessageActivity.USER_KEY)
                 val uid = FirebaseAuth.getInstance().uid
@@ -211,6 +225,7 @@ class ChatToItem(val text:String, val user: Users): Item<ViewHolder>() {
         viewHolder.itemView.textView_to_row.text = text
         val uri = user.imageUrl
         Picasso.get().load(uri).into(viewHolder.itemView.imageView_to_row)
+
     }
 
     override fun getLayout(): Int {
@@ -226,6 +241,8 @@ class loadImagesInChatLog( val chatMessage: ChatLogActivity.ChatMessage): Item<V
     override fun bind(viewHolder: ViewHolder, position: Int) {
         val uri= chatMessage.imageUrl
         Picasso.get().load(uri).into(viewHolder.itemView.imageView_chat_log)
+
+
     }
 
 }
