@@ -16,8 +16,6 @@
         android:hint="Enter message"
         android:inputType="textMultiLine|textPersonName"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/send_button_chat_log"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
@@ -44,4 +42,13 @@
         app:layout_constraintHorizontal_bias="0.51"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button_to_send_image_chat_log"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="image"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/send_button_chat_log"
+        app:layout_constraintStart_toEndOf="@+id/enter_message_chat_log" />
 </androidx.constraintlayout.widget.ConstraintLayout>

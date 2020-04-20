@@ -13,7 +13,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import com.example.messenger.R
-import com.example.messenger.messageActivity
+import com.example.messenger.latestMessages.messageActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage

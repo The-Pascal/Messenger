@@ -26,11 +26,7 @@ class newmessageActivity : AppCompatActivity() {
 
         supportActionBar?.title = "Select User"
 
-
-
         fetchusers()
-
-
     }
 
     companion object{
@@ -51,11 +47,7 @@ class newmessageActivity : AppCompatActivity() {
                     Log.e("Newmessages",it.toString())
                     val user = it.getValue(Users::class.java)
                     if(user != null) {
-                        adapter.add(
-                            UserItem(
-                                user
-                            )
-                        )
+                        adapter.add(UserItem(user))
                     }
                 }
                 adapter.setOnItemClickListener{item, view ->

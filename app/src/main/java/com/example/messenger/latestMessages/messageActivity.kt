@@ -1,10 +1,6 @@
-package com.example.messenger
+package com.example.messenger.latestMessages
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
 import android.content.Intent
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +9,7 @@ import android.view.MenuItem
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.example.messenger.R
 import com.example.messenger.chatLog.ChatLogActivity
 import com.example.messenger.registerLogin.RegistrationPage
 import com.example.messenger.registerLogin.Users
@@ -127,7 +124,11 @@ class  messageActivity : AppCompatActivity() {
     private fun refreshRecyclerViewMessage(){
         adapter.clear()
         latestMessagesMap.values.forEach{
-            adapter.add(LatestMessageRow(it))
+            adapter.add(
+                LatestMessageRow(
+                    it
+                )
+            )
         }
     }
 
@@ -155,7 +156,11 @@ class  messageActivity : AppCompatActivity() {
                 refreshRecyclerViewMessage()
 
 
-                adapter.add(LatestMessageRow(chatMessage))
+                adapter.add(
+                    LatestMessageRow(
+                        chatMessage
+                    )
+                )
             }
 
             override fun onChildRemoved(p0: DataSnapshot) {}
@@ -199,11 +204,11 @@ class  messageActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
-            R.id.new_messages_menu->{
+            R.id.new_messages_menu ->{
                 startActivity(Intent(this, newmessageActivity::class.java))
 
             }
-            R.id.sign_out_menu->{
+            R.id.sign_out_menu ->{
 
                 FirebaseAuth.getInstance().signOut()
                 val intent = Intent(this, RegistrationPage::class.java)
@@ -216,7 +221,7 @@ class  messageActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.nav_menu , menu)
+        menuInflater.inflate(R.menu.nav_menu, menu)
         return super.onCreateOptionsMenu(menu)
     }
 }

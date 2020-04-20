@@ -1,12 +1,16 @@
 package com.example.messenger.chatLog
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import com.example.messenger.R
-import com.example.messenger.messageActivity
+import com.example.messenger.latestMessages.messageActivity
 import com.example.messenger.totalUsers.newmessageActivity
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
@@ -15,33 +19,16 @@ import kotlinx.android.synthetic.main.activity_chat_log.*
 import com.example.messenger.registerLogin.Users
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.chat_from_row.view.*
 import kotlinx.android.synthetic.main.chat_to_row.view.*
+import java.util.*
 
-class ChatLogActivity : AppCompatActivity() ,
-Animation.AnimationListener{
+class ChatLogActivity : AppCompatActivity() {
 
     val adapter = GroupAdapter<ViewHolder>()
-
-
-    private lateinit var animFadeIn: Animation
-    private lateinit var animFadeOut: Animation
-    private lateinit var animFadeInOut: Animation
-
-    private lateinit var animZoomIn: Animation
-    private lateinit var animZoomOut: Animation
-
-    private lateinit var animLeftRight: Animation
-    private lateinit var animRightLeft: Animation
-    private lateinit var animTopBottom: Animation
-
-    private lateinit var animBounce: Animation
-    private lateinit var animFlash: Animation
-
-    private lateinit var animRotateLeft: Animation
-    private lateinit var animRotateRight: Animation
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,87 +45,63 @@ Animation.AnimationListener{
             performSendMessage()
         }
 
-        loadanimationTransition()
+        button_to_send_image_chat_log.setOnClickListener{
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = "image/*"
+            startActivityForResult(intent,0)
 
-      // setupDummyData()
+        }
     }
 
-    private fun loadanimationTransition(){
-        animLeftRight = AnimationUtils.loadAnimation(
-            this, R.anim.left_right
-        )
-        animRightLeft = AnimationUtils.loadAnimation(
-            this, R.anim.right_left
-        )
-        animFadeIn = AnimationUtils.loadAnimation(
-            this, R.anim.fade_in
-        )
-        //animFadeIn.setAnimationListener(this)
-        animFadeOut = AnimationUtils.loadAnimation(
-            this, R.anim.fade_out
-        )
-        animFadeInOut = AnimationUtils.loadAnimation(
-            this, R.anim.fade_in_out
-        )
+    var selectedPhotoUri : Uri?= null
 
-        animZoomIn = AnimationUtils.loadAnimation(
-            this, R.anim.zoom_in
-        )
-        animZoomOut = AnimationUtils.loadAnimation(
-            this, R.anim.zoom_out
-        )
+    var imageUrl: String ? = null
 
-        animLeftRight = AnimationUtils.loadAnimation(
-            this, R.anim.left_right
-        )
-        animRightLeft = AnimationUtils.loadAnimation(
-            this, R.anim.right_left
-        )
-        animTopBottom = AnimationUtils.loadAnimation(
-            this, R.anim.top_bot
-        )
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
 
-        animBounce = AnimationUtils.loadAnimation(
-            this, R.anim.bounce
-        )
-        animFlash = AnimationUtils.loadAnimation(
-            this, R.anim.flash
-        )
+        if(requestCode == 0 && resultCode== Activity.RESULT_OK && data!= null)
+        {
+            selectedPhotoUri = data.data
 
-        animRotateLeft = AnimationUtils.loadAnimation(
-            this, R.anim.rotate_left
-        )
-        animRotateRight = AnimationUtils.loadAnimation(
-            this, R.anim.rotate_right
-        )
+            uploadPhotoToFirebase()
 
+        }
     }
 
+    private fun uploadPhotoToFirebase() {
+        if(selectedPhotoUri == null) return
+
+        val filename = UUID.randomUUID().toString()
+        val ref = FirebaseStorage.getInstance().getReference("/images-send-by-users/$filename")
+        ref.putFile(selectedPhotoUri!!)
+            .addOnSuccessListener {
+                Log.e("imageshare", "Photo uploaded successfully: ${it.metadata?.path}")
+
+                ref.downloadUrl.addOnSuccessListener{
+
+                    imageUrl= it.toString()
+                    Log.e("imageshare", "image downloaded url : $imageUrl")
+                }
+            }
+
+    }
 
     private fun listenForMessages(){
 
         val ref = FirebaseDatabase.getInstance().getReference("/messages")
         ref.addChildEventListener(object: ChildEventListener{
-            override fun onCancelled(p0: DatabaseError) {
 
-            }
-
-            override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-            }
-
-            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
-            }
+            override fun onCancelled(p0: DatabaseError) {}
+            override fun onChildMoved(p0: DataSnapshot, p1: String?) {}
+            override fun onChildChanged(p0: DataSnapshot, p1: String?) {}
+            override fun onChildRemoved(p0: DataSnapshot) {}
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                 val chatMessage = p0.getValue(ChatMessage::class.java)
 
-
                 val user = intent.getParcelableExtra<Users>(newmessageActivity.USER_KEY)
                 val uid = FirebaseAuth.getInstance().uid
-                val databaseref = FirebaseDatabase.getInstance().getReference("/Users")
-                val imageUrl :String ?= null
-
-
 
                 if(chatMessage != null) {
                     Log.e("chat",chatMessage.text)
@@ -168,18 +131,15 @@ Animation.AnimationListener{
                     }
                     else{
                     }
-
                 }
-
-            }
-
-            override fun onChildRemoved(p0: DataSnapshot) {
             }
         })
     }
-    class ChatMessage(val id : String ,val text: String, val fromId : String , val toId : String , val timestamp: Long)
+
+    class ChatMessage(val id : String ,val text: String, val fromId : String , val toId :
+    String , val timestamp: Long , val imageUrl: String)
     {
-        constructor(): this("","","","",-1)
+        constructor(): this("","","","",-1,"")
     }
 
     private fun performSendMessage(){
@@ -188,10 +148,18 @@ Animation.AnimationListener{
         val fromId = FirebaseAuth.getInstance().uid
         val user = intent.getParcelableExtra<Users>(newmessageActivity.USER_KEY)
         val toId = user.uid
+        var imageUrlSend: String ? = null
+        if(imageUrl == null){
+            imageUrlSend = null
+        }
+        else{
+            imageUrlSend = imageUrl
+        }
 
         if(fromId == null )   return
-
+        if( imageUrlSend == null)   return
         val ref = FirebaseDatabase.getInstance().getReference("/messages").push()
+
 
         val chatMessage =
             ChatMessage(
@@ -199,13 +167,14 @@ Animation.AnimationListener{
                 text,
                 fromId,
                 toId,
-                System.currentTimeMillis() / 1000
+                System.currentTimeMillis() / 1000,
+                imageUrlSend
             )
         ref.setValue(chatMessage)
             .addOnSuccessListener {
                 enter_message_chat_log.text.clear()
                 recyclerView_chat_log.scrollToPosition(adapter.itemCount - 1)
-                Log.d("chatmessage","this is message ")
+                Log.d("imageshare","image successfully saved in database with url : $imageUrlSend")
             }
 
         val latestMessageRef = FirebaseDatabase.getInstance().getReference("/new-messages/$fromId/$toId")
@@ -213,23 +182,10 @@ Animation.AnimationListener{
 
         val latestToMessageRef = FirebaseDatabase.getInstance().getReference("/new-messages/$toId/$fromId")
         latestToMessageRef.setValue(chatMessage)
-
-
-
     }
 
-    override fun onAnimationRepeat(animation: Animation?) {}
-
-    override fun onAnimationEnd(animation: Animation?) {}
-
-    override fun onAnimationStart(animation: Animation?) {}
-
 }
 
-
-private fun Animation.setAnimationListener(childEventListener: ChildEventListener) {
-
-}
 
 class ChatFromItem(val text: String, val image : String): Item<ViewHolder>() {
 
@@ -245,37 +201,16 @@ class ChatFromItem(val text: String, val image : String): Item<ViewHolder>() {
 
 }
 
-class ChatToItem(val text:String, val user: Users): Item<ViewHolder>(), Animation.AnimationListener {
-
-    private lateinit var animLeftRight: Animation
-    private lateinit var animRightLeft: Animation
-
-
+class ChatToItem(val text:String, val user: Users): Item<ViewHolder>() {
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
         viewHolder.itemView.textView_to_row.text = text
         val uri = user.imageUrl
         Picasso.get().load(uri).into(viewHolder.itemView.imageView_to_row)
-
     }
 
     override fun getLayout(): Int {
-
         return R.layout.chat_to_row
-
-
-    }
-
-    override fun onAnimationRepeat(animation: Animation?) {
-
-    }
-
-    override fun onAnimationEnd(animation: Animation?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun onAnimationStart(animation: Animation?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
 

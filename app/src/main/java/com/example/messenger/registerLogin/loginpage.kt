@@ -7,7 +7,7 @@ import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
 import com.example.messenger.R
-import com.example.messenger.messageActivity
+import com.example.messenger.latestMessages.messageActivity
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_loginpage.*
 

@@ -12,15 +12,15 @@
         <activity android:name=".chatLog.ChatLogActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".messageActivity" />
+                android:value=".latestMessages.messageActivity" />
 
         </activity>
         <activity android:name=".totalUsers.newmessageActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".messageActivity" />
+                android:value=".latestMessages.messageActivity" />
         </activity>
-        <activity android:name=".messageActivity"></activity>
+        <activity android:name=".latestMessages.messageActivity"></activity>
         <activity android:name=".registerLogin.loginpage" />
         <activity android:name=".registerLogin.RegistrationPage">
             <intent-filter>
