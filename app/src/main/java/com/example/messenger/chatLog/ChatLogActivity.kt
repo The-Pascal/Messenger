@@ -24,6 +24,7 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.chat_from_row.view.*
 import kotlinx.android.synthetic.main.chat_to_row.view.*
+import kotlinx.android.synthetic.main.send_image_in_chat_log.view.*
 import java.util.*
 
 class ChatLogActivity : AppCompatActivity() {
@@ -39,7 +40,7 @@ class ChatLogActivity : AppCompatActivity() {
         val user = intent.getParcelableExtra<Users>(newmessageActivity.USER_KEY)
         supportActionBar?.title = user.username
 
-        listenForMessages()
+       listenForMessages()
 
         send_button_chat_log.setOnClickListener{
             performSendMessage()
@@ -117,6 +118,9 @@ class ChatLogActivity : AppCompatActivity() {
                             )
                         )
                         recyclerView_chat_log.scrollToPosition(adapter.itemCount - 1)
+                        if(chatMessage.imageUrl!="") {
+                            adapter.add(loadImagesInChatLog(chatMessage))
+                        }
 
                     }
                     else if(chatMessage.toId == uid && user.uid == chatMessage.fromId){
@@ -128,6 +132,10 @@ class ChatLogActivity : AppCompatActivity() {
                             )
                         )
                         recyclerView_chat_log.scrollToPosition(adapter.itemCount - 1)
+                        if(chatMessage.imageUrl!="") {
+                            adapter.add(loadImagesInChatLog(chatMessage))
+                        }
+
                     }
                     else{
                     }
@@ -136,8 +144,7 @@ class ChatLogActivity : AppCompatActivity() {
         })
     }
 
-    class ChatMessage(val id : String ,val text: String, val fromId : String , val toId :
-    String , val timestamp: Long , val imageUrl: String)
+    class ChatMessage(val id : String ,val text: String, val fromId : String , val toId : String , val timestamp: Long , val imageUrl: String)
     {
         constructor(): this("","","","",-1,"")
     }
@@ -148,16 +155,12 @@ class ChatLogActivity : AppCompatActivity() {
         val fromId = FirebaseAuth.getInstance().uid
         val user = intent.getParcelableExtra<Users>(newmessageActivity.USER_KEY)
         val toId = user.uid
-        var imageUrlSend: String ? = null
         if(imageUrl == null){
-            imageUrlSend = null
-        }
-        else{
-            imageUrlSend = imageUrl
+            imageUrl =""
         }
 
+
         if(fromId == null )   return
-        if( imageUrlSend == null)   return
         val ref = FirebaseDatabase.getInstance().getReference("/messages").push()
 
 
@@ -168,13 +171,14 @@ class ChatLogActivity : AppCompatActivity() {
                 fromId,
                 toId,
                 System.currentTimeMillis() / 1000,
-                imageUrlSend
+                imageUrl!!
             )
+
         ref.setValue(chatMessage)
             .addOnSuccessListener {
                 enter_message_chat_log.text.clear()
                 recyclerView_chat_log.scrollToPosition(adapter.itemCount - 1)
-                Log.d("imageshare","image successfully saved in database with url : $imageUrlSend")
+                Log.d("imageshare","image successfully saved in database with url : $imageUrl")
             }
 
         val latestMessageRef = FirebaseDatabase.getInstance().getReference("/new-messages/$fromId/$toId")
@@ -212,5 +216,17 @@ class ChatToItem(val text:String, val user: Users): Item<ViewHolder>() {
     override fun getLayout(): Int {
         return R.layout.chat_to_row
     }
+}
+
+class loadImagesInChatLog( val chatMessage: ChatLogActivity.ChatMessage): Item<ViewHolder>(){
+    override fun getLayout(): Int {
+        return R.layout.send_image_in_chat_log
+    }
+
+    override fun bind(viewHolder: ViewHolder, position: Int) {
+        val uri= chatMessage.imageUrl
+        Picasso.get().load(uri).into(viewHolder.itemView.imageView_chat_log)
+    }
+
 }
 
