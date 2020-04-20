@@ -9,6 +9,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.ImageView
 import androidx.fragment.app.FragmentManager
 import com.example.messenger.R
 import com.example.messenger.latestMessages.messageActivity
@@ -105,15 +106,16 @@ class ChatLogActivity : AppCompatActivity() {
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                 val chatMessage = p0.getValue(ChatMessage::class.java)
 
-                adapter.setOnItemClickListener { item, view ->
-                    if(chatMessage==null) return@setOnItemClickListener
 
-                    if(chatMessage.imageUrl!= "") {
+                   /* adapter.setOnItemClickListener { item, view ->
+
                         val dialog = show_images_dialog()
-                        dialog.sendImageSelected(chatMessage)
+                        val imageForDialog = findViewById<ImageView>(R.id.imageView_show_image_on_fullscreen)
+                        dialog.sendImageSelected(imageForDialog)
                         dialog.show(supportFragmentManager, "123")
-                    }
-                }
+
+                    }*/
+
 
                 val user = intent.getParcelableExtra<Users>(newmessageActivity.USER_KEY)
                 val uid = FirebaseAuth.getInstance().uid

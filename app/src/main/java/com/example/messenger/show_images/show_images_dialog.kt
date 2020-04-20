@@ -2,6 +2,7 @@ package com.example.messenger.show_images
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.media.Image
 import android.os.Bundle
 import android.widget.ImageView
 import androidx.fragment.app.DialogFragment
@@ -13,8 +14,7 @@ import kotlinx.android.synthetic.main.show_image_dialog.view.*
 
 class show_images_dialog : DialogFragment() {
 
-    var chatMessage : ChatLogActivity.ChatMessage ?=null
-
+    /*var chatMessage: ImageView ? = null
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
 
         val builder = AlertDialog.Builder(this.activity!!)
@@ -22,9 +22,9 @@ class show_images_dialog : DialogFragment() {
 
         val dialogView = inflater.inflate(R.layout.show_image_dialog,null)
 
-        val show_image = dialogView.findViewById<ImageView>(R.id.imageView_show_image_on_fullscreen)
+        var show_image = dialogView.findViewById<ImageView>(R.id.imageView_show_image_on_fullscreen)
 
-        Picasso.get().load(chatMessage?.imageUrl).into(show_image)
+        show_image.setImageResource(chatMessage.id)
 
         builder.setView(dialogView).setMessage("Image")
 
@@ -32,9 +32,10 @@ class show_images_dialog : DialogFragment() {
         return builder.create()
 
     }
-    fun sendImageSelected(chatMessage1: ChatLogActivity.ChatMessage){
+    fun sendImageSelected(chatMessage1: ImageView){
 
-        chatMessage = chatMessage1
+        chatMessage= chatMessage1
 
-    }
+
+    }*/
 }
