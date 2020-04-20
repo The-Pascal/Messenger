@@ -19,8 +19,10 @@ import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.chat_from_row.view.*
+import kotlinx.android.synthetic.main.chat_from_row.view.imageView_from_row
 import kotlinx.android.synthetic.main.chat_to_row.view.*
-import kotlinx.android.synthetic.main.sendImage_chatLog_To.view.*
+import kotlinx.android.synthetic.main.receive_image_from.view.*
+import kotlinx.android.synthetic.main.send_image_to.view.*
 import java.util.*
 
 class ChatLogActivity : AppCompatActivity() {
@@ -115,34 +117,52 @@ class ChatLogActivity : AppCompatActivity() {
                 if(chatMessage != null) {
                     Log.e("chat",chatMessage.text)
 
-                    if(chatMessage.fromId == uid && user.uid == chatMessage.toId)
+                    val currentUser = messageActivity.currentUser
+                    if(chatMessage.fromId == uid && user.uid == chatMessage.toId )
                     {
-                        val currentUser =
-                            messageActivity.currentUser
-                        adapter.add(
-                            ChatToItem(
-                                chatMessage.text,
-                                currentUser!!
+                        if(chatMessage.text!="" && chatMessage.imageUrl!=""){
+
+                            adapter.add(sendImageInChatLog(chatMessage,currentUser!!))
+                            adapter.add(
+                                ChatToItem(
+                                    chatMessage.text,
+                                    currentUser!!
+                                )
                             )
-                        )
-                        recyclerView_chat_log.scrollToPosition(adapter.itemCount - 1)
-                        if(chatMessage.imageUrl!="") {
-                            adapter.add(loadImagesInChatLog(chatMessage))
                         }
+                        else if( chatMessage.text =="" && chatMessage.imageUrl!="") {
+                            adapter.add(sendImageInChatLog(chatMessage,currentUser!!))
+
+                        }
+                        else if(chatMessage.text!="" && chatMessage.imageUrl==""){
+                            adapter.add(ChatToItem(chatMessage.text, currentUser!!))
+                        }
+                        else{
+
+                        }
+
+                        recyclerView_chat_log.scrollToPosition(adapter.itemCount - 1)
 
                     }
                     else if(chatMessage.toId == uid && user.uid == chatMessage.fromId){
 
-                        adapter.add(
-                            ChatFromItem(
-                                chatMessage.text,
-                                user.imageUrl
-                            )
-                        )
-                        recyclerView_chat_log.scrollToPosition(adapter.itemCount - 1)
-                        if(chatMessage.imageUrl!="") {
-                            adapter.add(loadImagesInChatLog(chatMessage))
+
+                        if(chatMessage.text!="" && chatMessage.imageUrl!=""){
+
+                            adapter.add(receiveImageInChatLog(chatMessage , user.imageUrl))
+                            adapter.add(ChatFromItem(chatMessage.text, user.imageUrl))
                         }
+                        else if( chatMessage.text =="" && chatMessage.imageUrl!="") {
+                            adapter.add(receiveImageInChatLog(chatMessage , user.imageUrl))
+
+                        }
+                        else if(chatMessage.text!="" && chatMessage.imageUrl==""){
+                            adapter.add(ChatToItem(chatMessage.text, currentUser!!))
+                        }
+                        else{
+
+                        }
+                        recyclerView_chat_log.scrollToPosition(adapter.itemCount - 1)
 
                     }
                     else{
@@ -227,14 +247,34 @@ class ChatToItem(val text:String, val user: Users): Item<ViewHolder>() {
     }
 }
 
-class loadImagesInChatLog( val chatMessage: ChatLogActivity.ChatMessage): Item<ViewHolder>(){
+class sendImageInChatLog( val chatMessage: ChatLogActivity.ChatMessage ,val user:Users): Item<ViewHolder>(){
     override fun getLayout(): Int {
-        return R.layout.sendImage_chatLog_To
+        return R.layout.send_image_to
     }
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
         val uri= chatMessage.imageUrl
-        Picasso.get().load(uri).into(viewHolder.itemView.imageView_chat_log)
+        Picasso.get().load(uri).into(viewHolder.itemView.send_image_chatlog)
+        val profileimage = user.imageUrl
+        Picasso.get().load(profileimage).into(viewHolder.itemView.profileimage_send_image)
+
+
+
+
+    }
+
+}
+
+class receiveImageInChatLog( val chatMessage: ChatLogActivity.ChatMessage , val image : String): Item<ViewHolder>(){
+    override fun getLayout(): Int {
+        return R.layout.receive_image_from
+    }
+
+    override fun bind(viewHolder: ViewHolder, position: Int) {
+        val uri= chatMessage.imageUrl
+        Picasso.get().load(uri).into(viewHolder.itemView.receive_image_chatlog)
+        Picasso.get().load(image).into(viewHolder.itemView.profileimage_receive_chatlog)
+
 
 
     }
