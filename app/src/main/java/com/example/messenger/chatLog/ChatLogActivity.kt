@@ -5,12 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
-import android.widget.ImageView
-import androidx.fragment.app.FragmentManager
 import com.example.messenger.R
 import com.example.messenger.latestMessages.messageActivity
 import com.example.messenger.totalUsers.newmessageActivity
@@ -19,16 +14,13 @@ import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_chat_log.*
 import com.example.messenger.registerLogin.Users
-import com.example.messenger.show_images.show_images_dialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.chat_from_row.view.*
 import kotlinx.android.synthetic.main.chat_to_row.view.*
-import kotlinx.android.synthetic.main.send_image_in_chat_log.view.*
-import kotlinx.android.synthetic.main.show_image_dialog.*
+import kotlinx.android.synthetic.main.sendImage_chatLog_To.view.*
 import java.util.*
 
 class ChatLogActivity : AppCompatActivity() {
@@ -237,7 +229,7 @@ class ChatToItem(val text:String, val user: Users): Item<ViewHolder>() {
 
 class loadImagesInChatLog( val chatMessage: ChatLogActivity.ChatMessage): Item<ViewHolder>(){
     override fun getLayout(): Int {
-        return R.layout.send_image_in_chat_log
+        return R.layout.sendImage_chatLog_To
     }
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
