@@ -2,28 +2,32 @@ package com.example.messenger.chatLog
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.BitmapFactory.*
+import android.graphics.Color
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import com.example.messenger.R
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import com.example.messenger.latestMessages.messageActivity
-import com.example.messenger.totalUsers.newmessageActivity
-import com.xwray.groupie.GroupAdapter
-import com.xwray.groupie.Item
-import com.xwray.groupie.ViewHolder
-import kotlinx.android.synthetic.main.activity_chat_log.*
 import com.example.messenger.registerLogin.Users
+import com.example.messenger.totalUsers.newmessageActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.Item
+import com.xwray.groupie.ViewHolder
+import kotlinx.android.synthetic.main.activity_chat_log.*
 import kotlinx.android.synthetic.main.chat_from_row.view.*
-import kotlinx.android.synthetic.main.chat_from_row.view.imageView_from_row
 import kotlinx.android.synthetic.main.chat_to_row.view.*
 import kotlinx.android.synthetic.main.receive_image_from.view.*
 import kotlinx.android.synthetic.main.send_image_to.view.*
 import java.util.*
+
 
 class ChatLogActivity : AppCompatActivity() {
 
@@ -45,11 +49,18 @@ class ChatLogActivity : AppCompatActivity() {
         }
 
         button_to_send_image_chat_log.setOnClickListener{
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/*"
-            startActivityForResult(intent,0)
 
+          uploadImageDataTodevice()
         }
+
+    }
+
+    private fun uploadImageDataTodevice()
+    {
+        button_to_send_image_chat_log.startAnimation()
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent,0)
 
     }
 
@@ -84,6 +95,11 @@ class ChatLogActivity : AppCompatActivity() {
                     Log.e("imageshare", "image downloaded url : $imageUrl")
                 }
             }
+        val icon : Bitmap
+        val deepColor = Color.parseColor("#808000")
+        icon = BitmapFactory.decodeResource(resources,R.drawable.tick_icon)
+        button_to_send_image_chat_log.doneLoadingAnimation(deepColor,icon)
+
 
     }
 
@@ -99,17 +115,6 @@ class ChatLogActivity : AppCompatActivity() {
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                 val chatMessage = p0.getValue(ChatMessage::class.java)
-
-
-                   /* adapter.setOnItemClickListener { item, view ->
-
-                        val dialog = show_images_dialog()
-                        val imageForDialog = findViewById<ImageView>(R.id.imageView_show_image_on_fullscreen)
-                        dialog.sendImageSelected(imageForDialog)
-                        dialog.show(supportFragmentManager, "123")
-
-                    }*/
-
 
                 val user = intent.getParcelableExtra<Users>(newmessageActivity.USER_KEY)
                 val uid = FirebaseAuth.getInstance().uid
@@ -214,6 +219,11 @@ class ChatLogActivity : AppCompatActivity() {
 
         val latestToMessageRef = FirebaseDatabase.getInstance().getReference("/new-messages/$toId/$fromId")
         latestToMessageRef.setValue(chatMessage)
+
+        imageUrl= null
+        button_to_send_image_chat_log.revertAnimation{
+            button_to_send_image_chat_log.setBackgroundResource(R.drawable.rounded_button)
+        }
     }
 
 }
