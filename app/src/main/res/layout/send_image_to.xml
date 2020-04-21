@@ -7,17 +7,15 @@
     android:layout_marginBottom="6dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <br.com.felix.imagezoom.ImageZoom
+    <ozaydin.serkan.com.image_zoom_view.ImageViewZoom
         android:id="@+id/send_image_chatlog"
-        android:layout_width="wrap_content"
+        android:layout_width="166dp"
         android:layout_height="166dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/profileimage_send_image"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@android:drawable/btn_star_big_on" />
+        app:srcCompat="@android:drawable/btn_star_big_on"
+        tools:layout_editor_absoluteY="0dp" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profileimage_send_image"
