@@ -21,15 +21,18 @@ class loginpage : AppCompatActivity() {
         val backToRegistration = findViewById<TextView>(R.id.back_to_registration_login)
         backToRegistration.setPaintFlags(backToRegistration.getPaintFlags() or Paint.UNDERLINE_TEXT_FLAG)
 
+        //Login function
         login()
 
+        //Back to registration text
         backToRegistration.setOnClickListener{
             val intent = Intent(this , RegistrationPage::class.java)
             startActivity(intent)
         }
     }
 
-    fun login(){
+    private fun login(){
+
         login_button_login.setOnClickListener{
             val email = email_editText_login.text.toString()
             val password = password_editText_login.text.toString()
@@ -50,8 +53,6 @@ class loginpage : AppCompatActivity() {
                         Toast.makeText(this, "Email is badly formatted",Toast.LENGTH_SHORT).show()
                         return@addOnCompleteListener
                     }
-
-
                 }
                 .addOnFailureListener {
                     Toast.makeText(this , "Error Logging in !!",Toast.LENGTH_SHORT).show()

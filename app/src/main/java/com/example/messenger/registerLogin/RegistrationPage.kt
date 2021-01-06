@@ -27,15 +27,14 @@ class RegistrationPage : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val registerbtn = findViewById<Button>(R.id.register_button_register)
+
         //used to underline text
         val alreadyhaveaccount = findViewById<TextView>(R.id.already_account_register)
         alreadyhaveaccount.setPaintFlags(alreadyhaveaccount.getPaintFlags() or Paint.UNDERLINE_TEXT_FLAG)
 
-        val registerbtn = findViewById<Button>(R.id.register_button_register)
-
         //registration button click
         registerbtn.setOnClickListener{
-
             register()
         }
 
@@ -45,13 +44,14 @@ class RegistrationPage : AppCompatActivity() {
             startActivity(myintent)
         }
 
+        //image selection click listener
         image_button_register.setOnClickListener{
             val intent =Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
             startActivityForResult(intent,0)
-
         }
 
+        //verify if user is logged in
         verifyUserIsLoggedIn()
 
     }
@@ -72,7 +72,7 @@ class RegistrationPage : AppCompatActivity() {
         }
     }
 
-    fun register(){
+    private fun register(){
 
         val email = email_editText_register.text.toString()
         val password = password_editText_register.text.toString()
@@ -96,7 +96,7 @@ class RegistrationPage : AppCompatActivity() {
                 }
             }
             .addOnFailureListener{
-                Toast.makeText(this, "Error creating account",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Error creating account. ${it.message}",Toast.LENGTH_SHORT).show()
             }
 
     }
@@ -115,7 +115,6 @@ class RegistrationPage : AppCompatActivity() {
                     saveUserToFirebaseDatabase(it.toString())
                 }
             }
-
     }
 
     private fun saveUserToFirebaseDatabase(profileImageUrl : String){

@@ -45,7 +45,9 @@ class ChatLogActivity : AppCompatActivity() {
        listenForMessages()
 
         send_button_chat_log.setOnClickListener{
+
             performSendMessage()
+
         }
 
         button_to_send_image_chat_log.setOnClickListener{
@@ -162,7 +164,7 @@ class ChatLogActivity : AppCompatActivity() {
 
                         }
                         else if(chatMessage.text!="" && chatMessage.imageUrl==""){
-                            adapter.add(ChatToItem(chatMessage.text, currentUser!!))
+                            adapter.add(ChatFromItem(chatMessage.text,user.imageUrl))
                         }
                         else{
 
