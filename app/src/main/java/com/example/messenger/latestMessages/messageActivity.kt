@@ -33,8 +33,7 @@ class  messageActivity : AppCompatActivity() {
     val CHANNEL_ID = "my_channel_01"
 
 
-
-
+    //onCreate start
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_message)
