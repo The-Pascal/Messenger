@@ -2,9 +2,7 @@ package com.example.messenger.registerLogin
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Paint
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Parcelable
 import android.provider.MediaStore
@@ -12,13 +10,14 @@ import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.example.messenger.R
 import com.example.messenger.latestMessages.messageActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.database.FirebaseDatabase
@@ -41,26 +40,33 @@ class RegistrationPage : AppCompatActivity() {
 
         //used to underline text
         val alreadyhaveaccount = findViewById<TextView>(R.id.already_account_register)
-//        alreadyhaveaccount.setPaintFlags(alreadyhaveaccount.getPaintFlags() or Paint.UNDERLINE_TEXT_FLAG)
 
         //registration button click
         registerbtn.setOnClickListener{
-            register()
+            firebaseAuthwithEmailPassword()
         }
 
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-
-        googleSignInClient = GoogleSignIn.getClient(this, gso)
-
-        auth = FirebaseAuth.getInstance()
-
         google_register.setOnClickListener{
+
+            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
+
+            googleSignInClient = GoogleSignIn.getClient(this, gso)
+
+            auth = FirebaseAuth.getInstance()
+
             val signInIntent = googleSignInClient.signInIntent
             startActivityForResult(signInIntent, RC_SIGN_IN)
         }
+
+
+
+        facebook_register.setOnClickListener {
+//            var provider = FirebaseAuth.getInstance().FacebookAuthProvider();
+        }
+
 
         //already have an account click listener
         already_account_register.setOnClickListener{
@@ -80,6 +86,7 @@ class RegistrationPage : AppCompatActivity() {
 
     }
 
+
     var selectedPhotoUri : Uri?= null
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -91,8 +98,6 @@ class RegistrationPage : AppCompatActivity() {
             val bitmap = MediaStore.Images.Media.getBitmap(contentResolver,selectedPhotoUri)
             imageview_register.setImageBitmap(bitmap)
             image_button_register.alpha = 0f
-            //val bitmapDrawable = BitmapDrawable(bitmap)
-            //image_button_register.setBackgroundDrawable(bitmapDrawable)
         }
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
@@ -112,6 +117,7 @@ class RegistrationPage : AppCompatActivity() {
 
     }
 
+
     private fun firebaseAuthWithGoogle(idToken: String) {
 
         val credential = GoogleAuthProvider.getCredential(idToken, null)
@@ -121,7 +127,14 @@ class RegistrationPage : AppCompatActivity() {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithCredential:success")
                     val user = auth.currentUser
-                    Toast.makeText(this,"Sign in successful /n welcome",Toast.LENGTH_SHORT).show()
+
+                    val act: GoogleSignInAccount ?= GoogleSignIn.getLastSignedInAccount(this)
+                    selectedPhotoUri = act?.photoUrl
+                    val username = act?.displayName
+                    val email = act?.email
+                    saveUserToFirebaseDatabase(username!!, email!!, selectedPhotoUri.toString())
+
+                    Toast.makeText(this,"Sign in successful",Toast.LENGTH_SHORT).show()
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
@@ -130,7 +143,8 @@ class RegistrationPage : AppCompatActivity() {
             }
     }
 
-    private fun register(){
+
+    private fun firebaseAuthwithEmailPassword(){
 
         val email = email_editText_register.text.toString()
         val password = password_editText_register.text.toString()
@@ -140,27 +154,24 @@ class RegistrationPage : AppCompatActivity() {
             Toast.makeText(this , "Enter all fields first ",Toast.LENGTH_SHORT).show()
             return
         }
-
         var auth = FirebaseAuth.getInstance()
-
         auth.createUserWithEmailAndPassword(email,password)
             .addOnCompleteListener {
                 if(!it.isSuccessful){
                     return@addOnCompleteListener
                 }
                 else{
-                    Toast.makeText(this,"Account successfully created with uid : ${it.result?.user?.uid} ",Toast.LENGTH_SHORT).show()
-                    uploadPhotoToFirebase()
+                    Toast.makeText(this,"Sign in Successful",Toast.LENGTH_SHORT).show()
+                    uploadPhotoToFirebase(username_editText_register.toString(), email)
                 }
             }
             .addOnFailureListener{
                 Toast.makeText(this, "Error creating account. ${it.message}",Toast.LENGTH_SHORT).show()
             }
-
     }
 
-    private fun uploadPhotoToFirebase() {
-            if(selectedPhotoUri == null) return
+    private fun uploadPhotoToFirebase(username: String, email: String) {
+        if(selectedPhotoUri == null) return
 
         val filename = UUID.randomUUID().toString()
         val ref = FirebaseStorage.getInstance().getReference("/images/$filename")
@@ -170,17 +181,18 @@ class RegistrationPage : AppCompatActivity() {
 
                 ref.downloadUrl.addOnSuccessListener{
                     Log.e("registerActivity", "image downloaded url : $it")
-                    saveUserToFirebaseDatabase(it.toString())
+                    saveUserToFirebaseDatabase(username, email, it.toString())
                 }
             }
     }
 
-    private fun saveUserToFirebaseDatabase(profileImageUrl : String){
+    private fun saveUserToFirebaseDatabase(username: String, email: String, profileImageUrl : String){
         val uid = FirebaseAuth.getInstance().uid?: ""
         val ref = FirebaseDatabase.getInstance().getReference("/Users/$uid")
         val users = Users(
             uid,
-            username_editText_register.text.toString(),
+            username,
+            email,
             profileImageUrl
         )
         ref.setValue(users)
@@ -210,7 +222,8 @@ class RegistrationPage : AppCompatActivity() {
     }
 }
 
+
 @Parcelize
-class Users(val uid: String , val username: String , val imageUrl : String): Parcelable{
-    constructor(): this("","","")
+class Users(val uid: String , val username: String , val email: String, val imageUrl : String): Parcelable{
+    constructor(): this("","","","")
 }
