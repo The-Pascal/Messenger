@@ -1,11 +1,10 @@
 package com.example.messenger.registerLogin
 
-import android.app.ActionBar
-import android.app.Activity
 import android.content.Intent
-import android.graphics.Paint
+import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.os.Bundle
-import android.provider.MediaStore
+import android.os.Handler
 import android.util.Log
 import android.widget.TextView
 import android.widget.Toast
@@ -17,9 +16,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.activity_loginpage.*
-import kotlinx.android.synthetic.main.activity_main.*
+
 
 class loginpage : AppCompatActivity() {
 
@@ -36,9 +34,17 @@ class loginpage : AppCompatActivity() {
         //Login function
         login()
 
+        //forgot password
+        forgot_password_login.setOnClickListener{
+            val intent = Intent(this,ResetPassword::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or ( Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+        }
+
         //Back to registration text
         backToRegistration.setOnClickListener{
             val intent = Intent(this , RegistrationPage::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or ( Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
         }
     }
@@ -46,6 +52,8 @@ class loginpage : AppCompatActivity() {
     private fun login(){
 
         google_login.setOnClickListener {
+
+            login_button_login.startAnimation()
 
             val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -62,10 +70,14 @@ class loginpage : AppCompatActivity() {
 
 
         login_button_login.setOnClickListener{
+
+            login_button_login.startAnimation()
+
             val email = email_editText_login.text.toString()
             val password = password_editText_login.text.toString()
 
             if(email.isEmpty() || password.isEmpty()){
+                login_button_login.revertAnimation()
                 Toast.makeText(this, "Enter all Credentials",Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -73,16 +85,26 @@ class loginpage : AppCompatActivity() {
             FirebaseAuth.getInstance().signInWithEmailAndPassword(email,password)
                 .addOnCompleteListener{
                     if(it.isSuccessful) {
-                        Toast.makeText(this, "Successfully Logged in", Toast.LENGTH_SHORT).show()
-                        startActivity(Intent(this , messageActivity::class.java))
+                        val deepColor = Color.parseColor("#27E1EF")
+                        val largeIcon = BitmapFactory.decodeResource(resources, R.drawable.blue_tick)
+                        login_button_login.doneLoadingAnimation(deepColor, largeIcon)
+                        val handler = Handler()
+                        handler.postDelayed({
+                                Toast.makeText(this, "Successfully Logged in", Toast.LENGTH_SHORT).show()
+                                val intent = Intent(this, messageActivity::class.java)
+                                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or ( Intent.FLAG_ACTIVITY_NEW_TASK)
+                                startActivity(intent)
+                        },1000)
                     }
                     else
                     {
-                        Toast.makeText(this, "Email is badly formatted",Toast.LENGTH_SHORT).show()
+                        login_button_login.revertAnimation()
+                        Toast.makeText(this, "Wrong credentials. Try again!!",Toast.LENGTH_SHORT).show()
                         return@addOnCompleteListener
                     }
                 }
                 .addOnFailureListener {
+                    login_button_login.revertAnimation()
                     Toast.makeText(this , "Error Logging in !!",Toast.LENGTH_SHORT).show()
                 }
 
@@ -102,15 +124,22 @@ class loginpage : AppCompatActivity() {
 
                 Toast.makeText(this, "Sign in successful", Toast.LENGTH_SHORT).show()
 
-                val intent = Intent(this, messageActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or ( Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
+                val deepColor = Color.parseColor("#27E1EF")
+                val largeIcon = BitmapFactory.decodeResource(resources, R.drawable.blue_tick)
+                login_button_login.doneLoadingAnimation(deepColor, largeIcon)
+                val handler = Handler()
+                handler.postDelayed({
+                    Toast.makeText(this, "Successfully Logged in", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, messageActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or ( Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                },1000)
 
             } catch (e: ApiException) {
                 // Google Sign In failed, update UI appropriately
                 Log.w(loginpage.TAG, "Google sign in failed", e)
-
                 Toast.makeText(this, "Failed to Sign in !!", Toast.LENGTH_SHORT).show()
+                login_button_login.revertAnimation()
             }
         }
 

@@ -2,15 +2,18 @@ package com.example.messenger.registerLogin
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.os.Parcelable
 import android.provider.MediaStore
 import android.util.Log
-import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import br.com.simplepass.loadingbutton.customViews.CircularProgressButton
 import com.example.messenger.R
 import com.example.messenger.latestMessages.messageActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -37,18 +40,20 @@ class RegistrationPage : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val registerbtn = findViewById<Button>(R.id.register_button_register)
+        val registerbtn = findViewById<CircularProgressButton>(R.id.register_button_reset)
 
         //used to underline text
         val alreadyhaveaccount = findViewById<TextView>(R.id.already_account_register)
 
         //registration button click
         registerbtn.setOnClickListener{
+            registerbtn.startAnimation()
             firebaseAuthwithEmailPassword()
         }
 
         google_register.setOnClickListener{
 
+            registerbtn.startAnimation()
             val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -61,34 +66,6 @@ class RegistrationPage : AppCompatActivity() {
             val signInIntent = googleSignInClient.signInIntent
             startActivityForResult(signInIntent, RC_SIGN_IN)
         }
-
-
-
-//        facebook_register.setOnClickListener {
-//            callbackManager = CallbackManager.Factory.create()
-//
-//            binding.buttonFacebookLogin.setReadPermissions("email", "public_profile")
-//            binding.buttonFacebookLogin.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
-//                override fun onSuccess(loginResult: LoginResult) {
-//                    Log.d(TAG, "facebook:onSuccess:$loginResult")
-//                    handleFacebookAccessToken(loginResult.accessToken)
-//                }
-//
-//                override fun onCancel() {
-//                    Log.d(TAG, "facebook:onCancel")
-//                    // [START_EXCLUDE]
-//                    updateUI(null)
-//                    // [END_EXCLUDE]
-//                }
-//
-//                override fun onError(error: FacebookException) {
-//                    Log.d(TAG, "facebook:onError", error)
-//                    // [START_EXCLUDE]
-//                    updateUI(null)
-//                    // [END_EXCLUDE]
-//                }
-//            })
-//        }
 
 
         //already have an account click listener
@@ -156,12 +133,11 @@ class RegistrationPage : AppCompatActivity() {
                     val username = act?.displayName
                     val email = act?.email
                     saveUserToFirebaseDatabase(username!!, email!!, selectedPhotoUri.toString())
-
-                    Toast.makeText(this,"Sign in successful",Toast.LENGTH_SHORT).show()
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
                     Toast.makeText(this,"Sign in failed!! ",Toast.LENGTH_SHORT).show()
+                    register_button_reset.revertAnimation()
                 }
             }
     }
@@ -169,11 +145,12 @@ class RegistrationPage : AppCompatActivity() {
 
     private fun firebaseAuthwithEmailPassword(){
 
-        val email = email_editText_register.text.toString()
+        val email = email_editText_reset.text.toString()
         val password = password_editText_register.text.toString()
         Log.e("register","Email: $email and password: $password")
 
         if(email.isEmpty() || password.isEmpty()){
+            register_button_reset.revertAnimation()
             Toast.makeText(this , "Enter all fields first ",Toast.LENGTH_SHORT).show()
             return
         }
@@ -181,14 +158,15 @@ class RegistrationPage : AppCompatActivity() {
         auth.createUserWithEmailAndPassword(email,password)
             .addOnCompleteListener {
                 if(!it.isSuccessful){
+                    register_button_reset.revertAnimation()
                     return@addOnCompleteListener
                 }
                 else{
-                    Toast.makeText(this,"Sign in Successful",Toast.LENGTH_SHORT).show()
                     uploadPhotoToFirebase(username_editText_register.toString(), email)
                 }
             }
             .addOnFailureListener{
+                register_button_reset.revertAnimation()
                 Toast.makeText(this, "Error creating account. ${it.message}",Toast.LENGTH_SHORT).show()
             }
     }
@@ -222,9 +200,25 @@ class RegistrationPage : AppCompatActivity() {
             .addOnSuccessListener {
                 Log.e("registerActivity","User is saved with $uid and $profileImageUrl")
 
-                val intent = Intent(this, messageActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or ( Intent.FLAG_ACTIVITY_NEW_TASK)
-                startActivity(intent)
+                val user = FirebaseAuth.getInstance().currentUser
+
+                user!!.sendEmailVerification()
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Log.d(TAG,"Email sent")
+                        }
+                    }
+
+                val deepColor = Color.parseColor("#27E1EF")
+                val largeIcon = BitmapFactory.decodeResource(resources, R.drawable.blue_tick)
+                register_button_reset.doneLoadingAnimation(deepColor, largeIcon)
+                val handler = Handler()
+                handler.postDelayed({
+                    Toast.makeText(this, "Account created successfully. Email sent to confirm.", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, messageActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or ( Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
+                },1000)
             }
     }
 

@@ -9,20 +9,38 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView_message_activity"
         android:layout_width="0dp"
-        android:layout_height="500dp"
+        android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/sign_out_temp"
+    <ImageView
+        android:id="@+id/floatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
+        android:scaleType="center"
+        android:elevation="10dp"
+        android:layout_marginEnd="32dp"
+        android:outlineAmbientShadowColor="@color/black"
+        android:outlineSpotShadowColor="@color/black"
+        android:layout_marginBottom="32dp"
+        android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerView_message_activity"
-        tools:layout_editor_absoluteX="82dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/new_message_fab_btn" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

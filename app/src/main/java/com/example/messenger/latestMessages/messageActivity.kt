@@ -1,13 +1,11 @@
 package com.example.messenger.latestMessages
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.messenger.R
 import com.example.messenger.chatLog.ChatLogActivity
@@ -22,24 +20,22 @@ import com.xwray.groupie.Item
 import com.xwray.groupie.ViewHolder
 import kotlinx.android.synthetic.main.activity_message.*
 import kotlinx.android.synthetic.main.newmessage.view.*
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.HashMap
+
 
 class  messageActivity : AppCompatActivity() {
-
-    companion object{
-        var currentUser: Users? = null
-        var chatPartnerName : String ?= null
-
-    }
-    val CHANNEL_ID = "my_channel_01"
-
 
     //onCreate start
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_message)
 
+        setSupportActionBar(toolbar)
+
         recyclerView_message_activity.adapter = adapter
-        recyclerView_message_activity.addItemDecoration(DividerItemDecoration(this , DividerItemDecoration.VERTICAL))
+        recyclerView_message_activity.apply { DividerItemDecoration(this.context, DividerItemDecoration.VERTICAL)}
 
         adapter.setOnItemClickListener { item, view ->
             Log.d("newmessage","click on one of the new message ")
@@ -48,21 +44,10 @@ class  messageActivity : AppCompatActivity() {
             val row = item as LatestMessageRow
             intent.putExtra(newmessageActivity.USER_KEY , row.chatPartnerUser)
             startActivity(intent)
-
-
         }
 
         fetchCurrentUser()
         listenForNewMessages()
-        //createNotificationChannel()
-
-        sign_out_temp.setOnClickListener {
-            FirebaseAuth.getInstance().signOut()
-            val intent = Intent(this, RegistrationPage::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or ( Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
-        }
-
 
     }
 
@@ -98,6 +83,9 @@ class  messageActivity : AppCompatActivity() {
 
                     chatPartnerName = chatPartnerUser?.username
                     viewHolder.itemView.username_new_message.text = chatPartnerUser?.username
+                    val sfd = SimpleDateFormat("HH:mm")
+
+                    viewHolder.itemView.time_textview.text = sfd.format(Date(chatMessage.timestamp))
 
                     Picasso.get().load(chatPartnerUser?.imageUrl).into(viewHolder.itemView.imageView_new_message)
                 }
@@ -131,11 +119,8 @@ class  messageActivity : AppCompatActivity() {
 
             override fun onChildChanged(p0: DataSnapshot, p1: String?) {
                 val chatMessage = p0.getValue(ChatLogActivity.ChatMessage::class.java)?: return
-
                 latestMessagesMap[p0.key!!] = chatMessage
                 refreshRecyclerViewMessage()
-
-               //notificationbuilder(chatMessage)
             }
 
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
@@ -143,13 +128,7 @@ class  messageActivity : AppCompatActivity() {
 
                 latestMessagesMap[p0.key!!] = chatMessage
                 refreshRecyclerViewMessage()
-
-
-                adapter.add(
-                    LatestMessageRow(
-                        chatMessage
-                    )
-                )
+                adapter.add(LatestMessageRow(chatMessage))
             }
 
             override fun onChildRemoved(p0: DataSnapshot) {}
@@ -158,22 +137,6 @@ class  messageActivity : AppCompatActivity() {
     }
     val adapter = GroupAdapter<ViewHolder>()
 
-
-    private fun notificationbuilder(chatMessage: ChatLogActivity.ChatMessage){
-
-        var builder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle(chatPartnerName)
-            .setContentText(chatMessage.text)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-
-        val notificationId = 79870
-
-        with(NotificationManagerCompat.from(this)) {
-            // notificationId is a unique int for each notification that you must define
-            notify(notificationId, builder.build())
-        }
-    }
     private fun fetchCurrentUser(){
         val uid = FirebaseAuth.getInstance().uid
         val ref = FirebaseDatabase.getInstance().getReference("/Users/$uid")
@@ -195,7 +158,6 @@ class  messageActivity : AppCompatActivity() {
         when(item.itemId){
             R.id.new_messages_menu ->{
                 startActivity(Intent(this, newmessageActivity::class.java))
-
             }
             R.id.sign_out_menu ->{
 
@@ -213,4 +175,11 @@ class  messageActivity : AppCompatActivity() {
         menuInflater.inflate(R.menu.nav_menu, menu)
         return super.onCreateOptionsMenu(menu)
     }
+
+    companion object{
+        var currentUser: Users? = null
+        var chatPartnerName : String ?= null
+        val CHANNEL_ID = "my_channel_01"
+    }
+
 }

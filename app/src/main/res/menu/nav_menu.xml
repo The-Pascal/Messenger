@@ -2,10 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/sign_out_menu"
-        android:title="Sign Out"
-        app:showAsAction="ifRoom"/>
     <item android:id="@+id/new_messages_menu"
-        android:title="New messages"
-        app:showAsAction="ifRoom"/>
+        android:title="New messages" />
+    <item android:id="@+id/settings"
+        android:title="Settings"/>
+    <item android:id="@+id/sign_out_menu"
+        android:title="Log Out" />
 </menu>
