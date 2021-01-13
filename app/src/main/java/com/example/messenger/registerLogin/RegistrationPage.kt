@@ -32,6 +32,7 @@ class RegistrationPage : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -63,9 +64,31 @@ class RegistrationPage : AppCompatActivity() {
 
 
 
-        facebook_register.setOnClickListener {
-//            var provider = FirebaseAuth.getInstance().FacebookAuthProvider();
-        }
+//        facebook_register.setOnClickListener {
+//            callbackManager = CallbackManager.Factory.create()
+//
+//            binding.buttonFacebookLogin.setReadPermissions("email", "public_profile")
+//            binding.buttonFacebookLogin.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
+//                override fun onSuccess(loginResult: LoginResult) {
+//                    Log.d(TAG, "facebook:onSuccess:$loginResult")
+//                    handleFacebookAccessToken(loginResult.accessToken)
+//                }
+//
+//                override fun onCancel() {
+//                    Log.d(TAG, "facebook:onCancel")
+//                    // [START_EXCLUDE]
+//                    updateUI(null)
+//                    // [END_EXCLUDE]
+//                }
+//
+//                override fun onError(error: FacebookException) {
+//                    Log.d(TAG, "facebook:onError", error)
+//                    // [START_EXCLUDE]
+//                    updateUI(null)
+//                    // [END_EXCLUDE]
+//                }
+//            })
+//        }
 
 
         //already have an account click listener

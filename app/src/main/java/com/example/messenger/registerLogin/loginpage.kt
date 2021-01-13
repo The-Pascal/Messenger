@@ -23,6 +23,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class loginpage : AppCompatActivity() {
 
+    private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,17 +45,20 @@ class loginpage : AppCompatActivity() {
 
     private fun login(){
 
-//        google_login.setOnClickListener {
-//
-//            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-//                .requestIdToken(getString(R.string.default_web_client_id))
-//                .requestEmail()
-//                .build()
-//
-//            googleSignInClient = GoogleSignIn.getClient(this, gso)
-//
-//            val credential = GoogleAuthProvider.getCredential(googleIdToken, null)
-//        }
+        google_login.setOnClickListener {
+
+            val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
+
+            googleSignInClient = GoogleSignIn.getClient(this, gso)
+
+            auth = FirebaseAuth.getInstance()
+
+            val signInIntent = googleSignInClient.signInIntent
+            startActivityForResult(signInIntent, loginpage.RC_SIGN_IN)
+        }
 
 
         login_button_login.setOnClickListener{
@@ -85,23 +89,36 @@ class loginpage : AppCompatActivity() {
         }
     }
 
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//
-//        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-//        if (requestCode == RegistrationPage.RC_SIGN_IN) {
-//            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-//            try {
-//                // Google Sign In was successful, authenticate with Firebase
-//                val account = task.getResult(ApiException::class.java)!!
-//                Log.d(RegistrationPage.TAG, "firebaseAuthWithGoogle:" + account.id)
-////                firebaseAuthWithGoogle(account.idToken!!)
-//            } catch (e: ApiException) {
-//                // Google Sign In failed, update UI appropriately
-//                Log.w(RegistrationPage.TAG, "Google sign in failed", e)
-//                // ...
-//            }
-//        }
-//
-//    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == loginpage.RC_SIGN_IN) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                val account = task.getResult(ApiException::class.java)!!
+                Log.d(loginpage.TAG, "firebaseAuthWithGoogle:" + account.id)
+
+                Toast.makeText(this, "Sign in successful", Toast.LENGTH_SHORT).show()
+
+                val intent = Intent(this, messageActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or ( Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+
+            } catch (e: ApiException) {
+                // Google Sign In failed, update UI appropriately
+                Log.w(loginpage.TAG, "Google sign in failed", e)
+
+                Toast.makeText(this, "Failed to Sign in !!", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+    }
+
+    companion object {
+        private const val TAG = "Login_Activity"
+        private const val RC_SIGN_IN = 9001
+    }
+
 }
