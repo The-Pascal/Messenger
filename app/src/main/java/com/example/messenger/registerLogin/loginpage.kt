@@ -1,11 +1,12 @@
 package com.example.messenger.registerLogin
 
+import android.app.ActionBar
 import android.content.Intent
 import android.graphics.Paint
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.example.messenger.R
 import com.example.messenger.latestMessages.messageActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -19,7 +20,6 @@ class loginpage : AppCompatActivity() {
 
         //used to underline text
         val backToRegistration = findViewById<TextView>(R.id.back_to_registration_login)
-        backToRegistration.setPaintFlags(backToRegistration.getPaintFlags() or Paint.UNDERLINE_TEXT_FLAG)
 
         //Login function
         login()

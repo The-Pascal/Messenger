@@ -56,6 +56,13 @@ class  messageActivity : AppCompatActivity() {
         listenForNewMessages()
         //createNotificationChannel()
 
+        sign_out_temp.setOnClickListener {
+            FirebaseAuth.getInstance().signOut()
+            val intent = Intent(this, RegistrationPage::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or ( Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+        }
+
 
     }
 
