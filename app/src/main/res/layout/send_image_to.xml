@@ -12,10 +12,10 @@
         android:layout_width="166dp"
         android:layout_height="166dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/profileimage_send_image"
-        app:srcCompat="@android:drawable/btn_star_big_on"
-        tools:layout_editor_absoluteY="0dp" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/btn_star_big_on" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profileimage_send_image"

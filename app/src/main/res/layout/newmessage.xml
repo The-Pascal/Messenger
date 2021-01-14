@@ -67,7 +67,7 @@
         app:layout_constraintTop_toTopOf="@+id/username_new_message" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/active_button_user_row"
         android:layout_width="16dp"
         android:layout_height="16dp"
         android:elevation="10dp"

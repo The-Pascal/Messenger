@@ -20,11 +20,12 @@ class ArchLifecycleApp : Application(), LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onAppBackgrounded() {
 
-        val user = FirebaseAuth.getInstance().currentUser
-        if (user != null) {
-            val uid = user.uid
-            FirebaseDatabase.getInstance().getReference("/Users/$uid/active")
+        val uid = FirebaseAuth.getInstance().uid
+        if (uid != null) {
+             FirebaseDatabase.getInstance().getReference("/Users/$uid/active")
                 .setValue(false)
+            FirebaseDatabase.getInstance().getReference("/Users/$uid/timestamp")
+                .setValue(System.currentTimeMillis())
         }
 
     }
@@ -32,9 +33,8 @@ class ArchLifecycleApp : Application(), LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onAppForegrounded() {
 
-        val user = FirebaseAuth.getInstance().currentUser
-        if (user != null) {
-            val uid = user.uid
+        val uid = FirebaseAuth.getInstance().uid
+        if (uid != null) {
             FirebaseDatabase.getInstance().getReference("/Users/$uid/active")
                 .setValue(true)
         }

@@ -28,6 +28,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.synthetic.main.activity_main.*
+import java.sql.Timestamp
 import java.util.*
 
 class RegistrationPage : AppCompatActivity() {
@@ -200,7 +201,8 @@ class RegistrationPage : AppCompatActivity() {
             email,
             profileImageUrl,
             status,
-            active
+            active,
+            System.currentTimeMillis()
         )
         ref.setValue(users)
             .addOnSuccessListener {
@@ -247,6 +249,6 @@ class RegistrationPage : AppCompatActivity() {
 
 
 @Parcelize
-class Users(val uid: String , val username: String , val email: String, val imageUrl : String, val status:String, val active: Boolean): Parcelable{
-    constructor(): this("","","","","",true)
+class Users(val uid: String , val username: String , val email: String, val imageUrl : String, val status:String, val active: Boolean, val timestamp: Long): Parcelable{
+    constructor(): this("","","","","",true,-1)
 }

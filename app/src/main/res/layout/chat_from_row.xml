@@ -16,9 +16,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:background="@drawable/rounded_corner_registration"
+        android:background="@drawable/chat_from_row_drawable"
         android:maxWidth="240dp"
-        android:padding="16dp"
+        android:textColor="@color/black"
+        android:padding="14dp"
         android:text="This is my message to show that how recycler view is going to wraper content for me "
         app:layout_constraintStart_toEndOf="@+id/imageView_from_row"
         tools:layout_editor_absoluteY="0dp" />

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.example.messenger.R
@@ -49,13 +50,64 @@ class  messageActivity : AppCompatActivity() {
 
         fetchCurrentUser()
         listenForNewMessages()
-
     }
 
+    private fun fetchCurrentUser(){
+        val uid = FirebaseAuth.getInstance().uid
+        val ref = FirebaseDatabase.getInstance().getReference("/Users/$uid")
+
+        ref.addListenerForSingleValueEvent(object : ValueEventListener{
+            override fun onCancelled(p0: DatabaseError) {
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                currentUser = p0.getValue(Users::class.java)
+                Log.d("LatestMessages","Current User ${currentUser?.imageUrl}")
+            }
+
+        })
+    }
+
+    val latestMessagesMap = HashMap<String , ChatLogActivity.ChatMessage>()
+
+    private fun refreshRecyclerViewMessage(){
+        adapter.clear()
+        latestMessagesMap.values.forEach{
+            adapter.add(LatestMessageRow(it))
+        }
+    }
+
+    private fun listenForNewMessages(){
+        val fromId = FirebaseAuth.getInstance().uid
+        val ref = FirebaseDatabase.getInstance().getReference("/new-messages/$fromId")
+        ref.addChildEventListener(object : ChildEventListener{
+
+            override fun onCancelled(p0: DatabaseError) {}
+            override fun onChildMoved(p0: DataSnapshot, p1: String?) {}
+            override fun onChildRemoved(p0: DataSnapshot) {}
+            override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+
+                val chatMessage = p0.getValue(ChatLogActivity.ChatMessage::class.java)?: return
+                latestMessagesMap[p0.key!!] = chatMessage
+                refreshRecyclerViewMessage()
+            }
+
+            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+                val chatMessage = p0.getValue(ChatLogActivity.ChatMessage::class.java)?: return
+                latestMessagesMap[p0.key!!] = chatMessage
+                refreshRecyclerViewMessage()
+            }
+
+
+        })
+    }
+
+    val adapter = GroupAdapter<ViewHolder>()
 
     class LatestMessageRow(val chatMessage: ChatLogActivity.ChatMessage) : Item<ViewHolder>(){
 
         var chatPartnerUser: Users?= null
+
         override fun getLayout(): Int {
             return R.layout.newmessage
 
@@ -82,13 +134,17 @@ class  messageActivity : AppCompatActivity() {
                 override fun onDataChange(p0: DataSnapshot) {
                     chatPartnerUser = p0.getValue(Users:: class.java)
 
+                    val chatPartnerActive = chatPartnerUser?.active
                     chatPartnerName = chatPartnerUser?.username
                     viewHolder.itemView.username_new_message.text = chatPartnerUser?.username
                     val sfd = SimpleDateFormat("HH:mm")
-
                     viewHolder.itemView.time_textview.text = sfd.format(Date(chatMessage.timestamp))
-
                     Picasso.get().load(chatPartnerUser?.imageUrl).into(viewHolder.itemView.imageView_new_message)
+
+                    if(chatPartnerActive==false)
+                    {
+                        viewHolder.itemView.active_button_user_row.visibility = View.INVISIBLE
+                    }
                 }
 
             })
@@ -97,63 +153,6 @@ class  messageActivity : AppCompatActivity() {
 
     }
 
-    val latestMessagesMap = HashMap<String , ChatLogActivity.ChatMessage>()
-
-    private fun refreshRecyclerViewMessage(){
-        adapter.clear()
-        latestMessagesMap.values.forEach{
-            adapter.add(
-                LatestMessageRow(
-                    it
-                )
-            )
-        }
-    }
-
-    private fun listenForNewMessages(){
-        val fromId = FirebaseAuth.getInstance().uid
-        val ref = FirebaseDatabase.getInstance().getReference("/new-messages/$fromId")
-        ref.addChildEventListener(object : ChildEventListener{
-            override fun onCancelled(p0: DatabaseError) {}
-
-            override fun onChildMoved(p0: DataSnapshot, p1: String?) {}
-
-            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
-                val chatMessage = p0.getValue(ChatLogActivity.ChatMessage::class.java)?: return
-                latestMessagesMap[p0.key!!] = chatMessage
-                refreshRecyclerViewMessage()
-            }
-
-            override fun onChildAdded(p0: DataSnapshot, p1: String?) {
-                val chatMessage = p0.getValue(ChatLogActivity.ChatMessage::class.java)?: return
-
-                latestMessagesMap[p0.key!!] = chatMessage
-                refreshRecyclerViewMessage()
-                adapter.add(LatestMessageRow(chatMessage))
-            }
-
-            override fun onChildRemoved(p0: DataSnapshot) {}
-
-        })
-    }
-    val adapter = GroupAdapter<ViewHolder>()
-
-    private fun fetchCurrentUser(){
-        val uid = FirebaseAuth.getInstance().uid
-        val ref = FirebaseDatabase.getInstance().getReference("/Users/$uid")
-
-        ref.addListenerForSingleValueEvent(object : ValueEventListener{
-            override fun onCancelled(p0: DatabaseError) {
-
-            }
-
-            override fun onDataChange(p0: DataSnapshot) {
-                currentUser =p0.getValue(Users::class.java)
-                Log.d("LatestMessages","Current User ${currentUser?.imageUrl}")
-            }
-
-        })
-    }
 
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
