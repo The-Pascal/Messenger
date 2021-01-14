@@ -14,6 +14,7 @@ import com.example.messenger.registerLogin.Users
 import com.example.messenger.totalUsers.newmessageActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 import com.xwray.groupie.GroupAdapter
 import com.xwray.groupie.Item
@@ -42,7 +43,7 @@ class  messageActivity : AppCompatActivity() {
             val intent = Intent( this , ChatLogActivity::class.java)
 
             val row = item as LatestMessageRow
-            intent.putExtra(newmessageActivity.USER_KEY , row.chatPartnerUser)
+            intent.putExtra(newmessageActivity.USER , row.chatPartnerUser)
             startActivity(intent)
         }
 
@@ -154,12 +155,22 @@ class  messageActivity : AppCompatActivity() {
         })
     }
 
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.nav_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             R.id.new_messages_menu ->{
                 startActivity(Intent(this, newmessageActivity::class.java))
             }
             R.id.sign_out_menu ->{
+
+                val uid = FirebaseAuth.getInstance().uid
+                FirebaseDatabase.getInstance().getReference("/Users/$uid/active")
+                    .setValue(false)
 
                 FirebaseAuth.getInstance().signOut()
                 val intent = Intent(this, RegistrationPage::class.java)
@@ -171,10 +182,6 @@ class  messageActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.nav_menu, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
 
     companion object{
         var currentUser: Users? = null

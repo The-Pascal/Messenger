@@ -40,9 +40,8 @@ class RegistrationPage : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val registerbtn = findViewById<CircularProgressButton>(R.id.register_button_reset)
+        val registerbtn = findViewById<CircularProgressButton>(R.id.register_button_register)
 
-        //used to underline text
         val alreadyhaveaccount = findViewById<TextView>(R.id.already_account_register)
 
         //registration button click
@@ -137,7 +136,7 @@ class RegistrationPage : AppCompatActivity() {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithCredential:failure", task.exception)
                     Toast.makeText(this,"Sign in failed!! ",Toast.LENGTH_SHORT).show()
-                    register_button_reset.revertAnimation()
+                    register_button_register.revertAnimation()
                 }
             }
     }
@@ -145,12 +144,14 @@ class RegistrationPage : AppCompatActivity() {
 
     private fun firebaseAuthwithEmailPassword(){
 
-        val email = email_editText_reset.text.toString()
+        val email = email_editText_register.text.toString()
         val password = password_editText_register.text.toString()
-        Log.e("register","Email: $email and password: $password")
+        val username = username_editText_register.text.toString()
+
+        Log.e("register","Email: $email and password: $password and username: $username")
 
         if(email.isEmpty() || password.isEmpty()){
-            register_button_reset.revertAnimation()
+            register_button_register.revertAnimation()
             Toast.makeText(this , "Enter all fields first ",Toast.LENGTH_SHORT).show()
             return
         }
@@ -158,15 +159,16 @@ class RegistrationPage : AppCompatActivity() {
         auth.createUserWithEmailAndPassword(email,password)
             .addOnCompleteListener {
                 if(!it.isSuccessful){
-                    register_button_reset.revertAnimation()
+                    register_button_register.revertAnimation()
                     return@addOnCompleteListener
                 }
                 else{
-                    uploadPhotoToFirebase(username_editText_register.toString(), email)
+
+                    uploadPhotoToFirebase(username, email)
                 }
             }
             .addOnFailureListener{
-                register_button_reset.revertAnimation()
+                register_button_register.revertAnimation()
                 Toast.makeText(this, "Error creating account. ${it.message}",Toast.LENGTH_SHORT).show()
             }
     }
@@ -190,11 +192,15 @@ class RegistrationPage : AppCompatActivity() {
     private fun saveUserToFirebaseDatabase(username: String, email: String, profileImageUrl : String){
         val uid = FirebaseAuth.getInstance().uid?: ""
         val ref = FirebaseDatabase.getInstance().getReference("/Users/$uid")
+        val status = "Not set"
+        val active = true
         val users = Users(
             uid,
             username,
             email,
-            profileImageUrl
+            profileImageUrl,
+            status,
+            active
         )
         ref.setValue(users)
             .addOnSuccessListener {
@@ -211,7 +217,7 @@ class RegistrationPage : AppCompatActivity() {
 
                 val deepColor = Color.parseColor("#27E1EF")
                 val largeIcon = BitmapFactory.decodeResource(resources, R.drawable.blue_tick)
-                register_button_reset.doneLoadingAnimation(deepColor, largeIcon)
+                register_button_register.doneLoadingAnimation(deepColor, largeIcon)
                 val handler = Handler()
                 handler.postDelayed({
                     Toast.makeText(this, "Account created successfully. Email sent to confirm.", Toast.LENGTH_SHORT).show()
@@ -241,6 +247,6 @@ class RegistrationPage : AppCompatActivity() {
 
 
 @Parcelize
-class Users(val uid: String , val username: String , val email: String, val imageUrl : String): Parcelable{
-    constructor(): this("","","","")
+class Users(val uid: String , val username: String , val email: String, val imageUrl : String, val status:String, val active: Boolean): Parcelable{
+    constructor(): this("","","","","",true)
 }

@@ -39,7 +39,7 @@ class ChatLogActivity : AppCompatActivity() {
 
         recyclerView_chat_log.adapter = adapter
 
-        val user = intent.getParcelableExtra<Users>(newmessageActivity.USER_KEY)
+        val user = intent.getParcelableExtra<Users>(newmessageActivity.USER)
         supportActionBar?.title = user.username
 
        listenForMessages()
@@ -118,7 +118,7 @@ class ChatLogActivity : AppCompatActivity() {
             override fun onChildAdded(p0: DataSnapshot, p1: String?) {
                 val chatMessage = p0.getValue(ChatMessage::class.java)
 
-                val user = intent.getParcelableExtra<Users>(newmessageActivity.USER_KEY)
+                val user = intent.getParcelableExtra<Users>(newmessageActivity.USER)
                 val uid = FirebaseAuth.getInstance().uid
 
                 if(chatMessage != null) {
@@ -188,7 +188,7 @@ class ChatLogActivity : AppCompatActivity() {
         val text = enter_message_chat_log.text.toString()
 
         val fromId = FirebaseAuth.getInstance().uid
-        val user = intent.getParcelableExtra<Users>(newmessageActivity.USER_KEY)
+        val user = intent.getParcelableExtra<Users>(newmessageActivity.USER)
         val toId = user.uid
         if(imageUrl == null){
             imageUrl =""
@@ -205,7 +205,7 @@ class ChatLogActivity : AppCompatActivity() {
                 text,
                 fromId,
                 toId,
-                System.currentTimeMillis() / 1000,
+                System.currentTimeMillis(),
                 imageUrl!!
             )
 

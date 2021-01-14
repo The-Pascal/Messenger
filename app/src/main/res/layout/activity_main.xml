@@ -72,7 +72,7 @@
         app:layout_constraintTop_toBottomOf="@+id/image_button_register" />
 
     <EditText
-        android:id="@+id/email_editText_reset"
+        android:id="@+id/email_editText_register"
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:layout_marginTop="16dp"
@@ -104,13 +104,13 @@
         android:paddingLeft="15dp"
         android:textColor="@color/black"
         android:textSize="14dp"
-        app:layout_constraintEnd_toEndOf="@+id/email_editText_reset"
+        app:layout_constraintEnd_toEndOf="@+id/email_editText_register"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/email_editText_reset"
-        app:layout_constraintTop_toBottomOf="@+id/email_editText_reset" />
+        app:layout_constraintStart_toStartOf="@+id/email_editText_register"
+        app:layout_constraintTop_toBottomOf="@+id/email_editText_register" />
 
         <br.com.simplepass.loadingbutton.customViews.CircularProgressButton
-            android:id="@+id/register_button_reset"
+            android:id="@+id/register_button_register"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="25dp"
@@ -138,7 +138,7 @@
         android:layout_marginEnd="28dp"
         android:background="#9498AE"
         app:layout_constraintEnd_toStartOf="@+id/textView3"
-        app:layout_constraintTop_toBottomOf="@+id/register_button_reset" />
+        app:layout_constraintTop_toBottomOf="@+id/register_button_register" />
 
     <TextView
         android:id="@+id/textView3"
@@ -149,7 +149,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/register_button_reset" />
+        app:layout_constraintTop_toBottomOf="@+id/register_button_register" />
 
     <View
         android:id="@+id/divider2"
@@ -159,7 +159,7 @@
         android:layout_marginTop="40dp"
         android:background="#9498AE"
         app:layout_constraintStart_toEndOf="@+id/textView3"
-        app:layout_constraintTop_toBottomOf="@+id/register_button_reset" />
+        app:layout_constraintTop_toBottomOf="@+id/register_button_register" />
 
 
         <ImageView

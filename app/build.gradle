@@ -62,6 +62,7 @@ dependencies {
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.lifecycle:lifecycle-process:2.1.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
