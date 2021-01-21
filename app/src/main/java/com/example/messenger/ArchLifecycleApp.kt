@@ -27,7 +27,6 @@ class ArchLifecycleApp : Application(), LifecycleObserver {
             FirebaseDatabase.getInstance().getReference("/Users/$uid/timestamp")
                 .setValue(System.currentTimeMillis())
         }
-
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)

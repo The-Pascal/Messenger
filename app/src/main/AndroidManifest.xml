@@ -2,8 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.messenger">
 
-
-
     <application
         android:name=".ArchLifecycleApp"
         android:allowBackup="true"
@@ -12,8 +10,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-
-        <activity android:name=".registerLogin.ResetPassword"></activity>
+        <activity android:name=".Profile"></activity>
+        <activity android:name=".registerLogin.ResetPassword" />
         <activity android:name=".chatLog.ChatLogActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

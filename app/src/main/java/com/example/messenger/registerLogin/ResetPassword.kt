@@ -25,6 +25,7 @@ class ResetPassword : AppCompatActivity() {
             FirebaseAuth.getInstance().sendPasswordResetEmail("chaharchandresh@gmail.com")
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
+                        button_reset_password.text = "Reset link sent"
                         Log.d(TAG, "Email sent.")
                     }
                 }

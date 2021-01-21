@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.example.messenger.Profile
 import com.example.messenger.R
 import com.example.messenger.chatLog.ChatLogActivity
 import com.example.messenger.registerLogin.RegistrationPage
@@ -46,6 +47,10 @@ class  messageActivity : AppCompatActivity() {
             val row = item as LatestMessageRow
             intent.putExtra(newmessageActivity.USER , row.chatPartnerUser)
             startActivity(intent)
+        }
+
+        floatingActionButton.setOnClickListener {
+            startActivity(Intent(this, newmessageActivity::class.java))
         }
 
         fetchCurrentUser()
@@ -164,6 +169,9 @@ class  messageActivity : AppCompatActivity() {
         when(item.itemId){
             R.id.new_messages_menu ->{
                 startActivity(Intent(this, newmessageActivity::class.java))
+            }
+            R.id.profile -> {
+                startActivity(Intent(this, Profile::class.java))
             }
             R.id.sign_out_menu ->{
 

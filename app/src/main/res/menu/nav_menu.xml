@@ -4,8 +4,8 @@
 
     <item android:id="@+id/new_messages_menu"
         android:title="New messages" />
-    <item android:id="@+id/settings"
-        android:title="Settings"/>
+    <item android:id="@+id/profile"
+        android:title="Profile"/>
     <item android:id="@+id/sign_out_menu"
         android:title="Log Out" />
 </menu>

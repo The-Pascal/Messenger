@@ -16,6 +16,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.android.synthetic.main.activity_loginpage.*
 
 
@@ -88,6 +89,9 @@ class loginpage : AppCompatActivity() {
                         val deepColor = Color.parseColor("#27E1EF")
                         val largeIcon = BitmapFactory.decodeResource(resources, R.drawable.blue_tick)
                         login_button_login.doneLoadingAnimation(deepColor, largeIcon)
+                        val uid = FirebaseAuth.getInstance().uid
+                        FirebaseDatabase.getInstance().getReference("/Users/$uid/active")
+                            .setValue(true)
                         val handler = Handler()
                         handler.postDelayed({
                                 Toast.makeText(this, "Successfully Logged in", Toast.LENGTH_SHORT).show()
@@ -127,6 +131,9 @@ class loginpage : AppCompatActivity() {
                 val deepColor = Color.parseColor("#27E1EF")
                 val largeIcon = BitmapFactory.decodeResource(resources, R.drawable.blue_tick)
                 login_button_login.doneLoadingAnimation(deepColor, largeIcon)
+                val uid = FirebaseAuth.getInstance().uid
+                FirebaseDatabase.getInstance().getReference("/Users/$uid/active")
+                    .setValue(true)
                 val handler = Handler()
                 handler.postDelayed({
                     Toast.makeText(this, "Successfully Logged in", Toast.LENGTH_SHORT).show()
